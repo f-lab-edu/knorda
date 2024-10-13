@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: "knorda"
+  profiles:
+    active: dev
+    group:
+      dev:
+        - global
+        - dev
+      prod:
+        - global
+        - prod

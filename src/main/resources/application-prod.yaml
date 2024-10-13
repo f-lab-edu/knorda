@@ -1,0 +1,9 @@
+# JPA Query Production용 설정
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false #To beautify or pretty print the SQL
+        show_sql: false #show sql
+
+logging.level.org.springframework: INFO

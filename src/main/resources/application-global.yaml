@@ -1,0 +1,46 @@
+# JPA contiguration
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        query:
+          in_clause_parameter_padding: true
+          plan_cache_max_size: 512
+          plan_parameter_metadata_max_size: 32
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+
+# actuator healthcheck setting
+# /kn-check/health 호출로 spring health check 수행
+management:
+  health:
+    mail:
+      enabled: false
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      enabled: true
+
+# Springdoc OpenApi 설정
+springdoc:
+  api-docs:
+    groups:
+      enabled: true
+  swagger-ui:
+    enabled: true
+    groups-order: ASC
+    tags-sorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+    doc-expansion: true
+  cache:
+    disabled: true
+  model-and-view-allowed: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
