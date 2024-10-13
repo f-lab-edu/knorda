@@ -21,6 +21,7 @@ management:
   endpoints:
     enabled-by-default: false
     web:
+      base-path: ${HEALTH-CHECK-PATH}
       exposure:
         include: health
   endpoint:
@@ -30,9 +31,11 @@ management:
 # Springdoc OpenApi 설정
 springdoc:
   api-docs:
+    path: ${SWAGGER-PATH}
     groups:
       enabled: true
   swagger-ui:
+    path: ${SWAGGER-UI-PATH}
     enabled: true
     groups-order: ASC
     tags-sorter: alpha
