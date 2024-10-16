@@ -1,2 +1,2 @@
-# KNORDA
-Online Bidding site cloning project
+## KNORDA - Online Bidding cloning project
+
