@@ -29,7 +29,7 @@ import org.springframework.test.context.TestPropertySource;
  * - args: main 메소드에 전달할 인자를 지정
  */
 @TestPropertySource(properties = {"spring.config.location = classpath:application-test.yaml"})
-@SpringBootTest
+@SpringBootTest(useMainMethod = SpringBootTest.UseMainMethod.ALWAYS)
 class KnordaApplicationTests {
 
 	/**
@@ -39,10 +39,5 @@ class KnordaApplicationTests {
 	@Test
 	void contextLoads() {
 		assert true;
-	}
-
-	@Test
-	public void main() {
-		KnordaApplication.main(new String[] {});
 	}
 }
