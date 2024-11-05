@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'jacoco'
 }
 
 group = 'dev.cass.knorda'
@@ -27,12 +28,59 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Test dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'com.h2database:h2'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+jacocoTestReport {
+    // test task가 끝난 후 실행
+    dependsOn test
+
+    reports {
+        // 커버리지 테스트 결과를 xml, html 파일로 생성
+        xml.required.set(true)
+        html.required.set(true)
+
+        // xml, html 파일 생성 위치
+        xml.destination file(layout.buildDirectory.dir("jacoco/jacocoTestReport.xml"))
+        html.destination file(layout.buildDirectory.dir("jacoco/html"))
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            // 커버리지 체크 기준을 class로 설정
+            element = 'CLASS'
+
+            // Branch 커버리지가 80% 미만일 경우 실패
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            // Line 커버리지가 80% 미만일 경우 실패
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+        }
+    }
 }
