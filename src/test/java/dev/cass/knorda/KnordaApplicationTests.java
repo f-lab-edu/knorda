@@ -2,8 +2,7 @@ package dev.cass.knorda;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * - TestPropertySource
@@ -12,6 +11,9 @@ import org.springframework.test.context.TestPropertySource;
  * TestPropertySource 어노테이션으로 로드한 properties는, JAVA 시스템에서, 애플리케이션 단위에서 (@PropertySource), 혹은 programmatically하게 선언한 속성 (ApplicationContextInitializer)보다 우선순위가 높음
  * 단, @DynamicPropertySource 어노테이션으로 로드한 properties는, TestPropertySource 어노테이션으로 로드한 properties보다 우선순위가 높음
  * 즉, test/resources/application-test.yaml 파일을 로드하고, 해당 파일에 선언된 properties를 사용할 것임을 명시
+ *
+ * - ActiveProfiles
+ * 활성화할 프로파일을 지정하는 어노테이션
  *
  * - SpringBootTest
  * spring-boot-test 라이브러리에서 제공하는 어노테이션
@@ -28,7 +30,7 @@ import org.springframework.test.context.TestPropertySource;
  * - useMainMethod: main 메소드를 사용할 것인지 지정
  * - args: main 메소드에 전달할 인자를 지정
  */
-@TestPropertySource(properties = {"spring.config.location = classpath:application-test.yaml"})
+@ActiveProfiles("test")
 @SpringBootTest(useMainMethod = SpringBootTest.UseMainMethod.ALWAYS)
 class KnordaApplicationTests {
 
