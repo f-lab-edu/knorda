@@ -1,11 +1,29 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test;MODE=MySQL
-    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:test;MODE=MySQL;DATABASE_TO_UPPER=FALSE
     username: sa
     password:
+    driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
     database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+      platform: h2
+      schema-locations: classpath:db/h2/schema.sql
+      data-locations: classpath:db/h2/data.sql
+
+encrypt:
+  salt: ${ENCRYPT-SALT}
+
+logging.level.org.hibernate: INFO
+logging.level.org.springframework: INFO
