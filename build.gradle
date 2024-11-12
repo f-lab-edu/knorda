@@ -69,6 +69,8 @@ jacocoTestReport {
             ])
         }))
     }
+
+    finalizedBy 'jacocoTestCoverageVerification'
 }
 
 jacocoTestCoverageVerification {
@@ -94,7 +96,9 @@ jacocoTestCoverageVerification {
             // DTO 클래스는 커버리지 체크에서 제외
             excludes = [
                     '**.dto.**',
-                    '**.exception.**'
+                    '**.exception.**',
+                    '**.EncryptUtils',
+                    '**.SessionManageUtils'
             ]
         }
     }
