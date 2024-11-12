@@ -58,7 +58,7 @@ class MemberControllerTest {
 	void saveUser() throws Exception {
 		// Given
 		RegisterDto.RegisterRequest registerRequest = new RegisterDto.RegisterRequest("test", "test1234", "test");
-		RegisterDto.registerResponse registerResponse = new RegisterDto.registerResponse("test");
+		RegisterDto.RegisterResponse registerResponse = new RegisterDto.RegisterResponse("test");
 
 		doReturn(registerResponse).when(memberService).saveUser(any(RegisterDto.RegisterRequest.class));
 
@@ -95,7 +95,7 @@ class MemberControllerTest {
 	void isExistUser() throws Exception {
 		// Given
 		String name = "admin";
-		RegisterDto.isExistResponse isExistResponse = new RegisterDto.isExistResponse(true);
+		RegisterDto.IsExistResponse isExistResponse = new RegisterDto.IsExistResponse(true);
 
 		doReturn(true).when(memberService).isExistUsername(name);
 
@@ -113,7 +113,7 @@ class MemberControllerTest {
 	void getMember() throws Exception {
 		// Given
 		String name = "admin";
-		RegisterDto.getMemberResponse registerResponse = new RegisterDto.getMemberResponse("admin", "admin", null, null, null);
+		RegisterDto.GetMemberResponse registerResponse = new RegisterDto.GetMemberResponse("admin", "admin", null, null, null);
 
 		doReturn(registerResponse).when(memberService).findMemberByUsername(name);
 
@@ -132,7 +132,7 @@ class MemberControllerTest {
 	void getMemberByUsername() throws Exception {
 		// Given
 		String name = "admin";
-		RegisterDto.getMemberResponse registerResponse = new RegisterDto.getMemberResponse("admin", "admin", null, null, null);
+		RegisterDto.GetMemberResponse registerResponse = new RegisterDto.GetMemberResponse("admin", "admin", null, null, null);
 
 		doReturn(registerResponse).when(memberService).findMemberByUsername(name);
 
@@ -151,10 +151,10 @@ class MemberControllerTest {
 	void updateMember() throws Exception {
 		// Given
 		String name = "admin";
-		RegisterDto.updateMemberRequest updateMemberRequest = new RegisterDto.updateMemberRequest("description change");
-		RegisterDto.updateMemberResponse updateMemberResponse = new RegisterDto.updateMemberResponse("admin", "description change");
+		RegisterDto.UpdateMemberRequest updateMemberRequest = new RegisterDto.UpdateMemberRequest("description change");
+		RegisterDto.UpdateMemberResponse updateMemberResponse = new RegisterDto.UpdateMemberResponse("admin", "description change");
 
-		doReturn(updateMemberResponse).when(memberService).updateMember(eq(name), any(RegisterDto.updateMemberRequest.class), eq(name));
+		doReturn(updateMemberResponse).when(memberService).updateMember(eq(name), any(RegisterDto.UpdateMemberRequest.class), eq(name));
 
 		// When
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/users")
@@ -173,10 +173,10 @@ class MemberControllerTest {
 	void updateMemberByUsername() throws Exception {
 		// Given
 		String name = "admin";
-		RegisterDto.updateMemberRequest updateMemberRequest = new RegisterDto.updateMemberRequest("description change");
-		RegisterDto.updateMemberResponse updateMemberResponse = new RegisterDto.updateMemberResponse("admin", "description change");
+		RegisterDto.UpdateMemberRequest updateMemberRequest = new RegisterDto.UpdateMemberRequest("description change");
+		RegisterDto.UpdateMemberResponse updateMemberResponse = new RegisterDto.UpdateMemberResponse("admin", "description change");
 
-		doReturn(updateMemberResponse).when(memberService).updateMember(eq(name), any(RegisterDto.updateMemberRequest.class), eq(name));
+		doReturn(updateMemberResponse).when(memberService).updateMember(eq(name), any(RegisterDto.UpdateMemberRequest.class), eq(name));
 
 		// When
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/users/{username}", name)

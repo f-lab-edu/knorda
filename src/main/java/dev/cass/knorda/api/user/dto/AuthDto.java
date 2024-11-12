@@ -6,6 +6,9 @@ import lombok.Getter;
 
 public class AuthDto {
 
+	private AuthDto() {
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public static class LoginResponse {

@@ -18,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public final class EncryptUtils {
-	private static String salt;
+	private static String SALT;
+
+
 
 	/**
 	 * Value - 해당 필드에 주입할 값을 지정하는 어노테이션
@@ -28,17 +30,17 @@ public final class EncryptUtils {
 	 */
 	@Value("${encrypt.salt}")
 	public void setSalt(String salt) {
-		EncryptUtils.salt = salt;
+		EncryptUtils.SALT = salt;
 	}
 
 	public static String encryptSHA256(String input) {
 		try {
 			java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
-			md.update(salt.getBytes());
+			md.update(SALT.getBytes());
 			return hashing(input, md);
 		} catch (java.security.NoSuchAlgorithmException e) {
 			log.error("암호화를 실패했습니다. in {} message {}", input, e.getMessage());
-			throw new RuntimeException("암호화를 실패했습니다. 다시 시도해주세요");
+			throw new IllegalArgumentException("암호화를 실패했습니다. 다시 시도해주세요");
 		}
 	}
 

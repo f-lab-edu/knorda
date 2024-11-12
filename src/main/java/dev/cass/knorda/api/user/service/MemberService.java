@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import dev.cass.knorda.api.user.Exception.IdPasswordNotMatchException;
+import dev.cass.knorda.api.user.Exception.UserNotFoundException;
 import dev.cass.knorda.api.user.dto.AuthDto;
 import dev.cass.knorda.api.user.dto.RegisterDto;
 import dev.cass.knorda.domain.member.Member;
@@ -29,8 +31,8 @@ public class MemberService {
 	 * 두 개 이상의 작업을 하나의 단위로 묶는 경우에만 따로 Transactional을 선언해주면 된다.
 	 * - readOnly : 읽기 전용으로 설정하면, 해당 트랜잭션 내에서 데이터 변경 작업을 할 수 없다.
 	 */
-	public RegisterDto.registerResponse saveUser(RegisterDto.RegisterRequest request) {
-		return RegisterDto.registerResponse.of(memberRepository.save(request.toEntity()));
+	public RegisterDto.RegisterResponse saveUser(RegisterDto.RegisterRequest request) {
+		return RegisterDto.RegisterResponse.of(memberRepository.save(request.toEntity()));
 	}
 
 	@Transactional(readOnly = true)
@@ -49,13 +51,13 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public RegisterDto.getMemberResponse findMemberByUsername(String username) {
+	public RegisterDto.GetMemberResponse findMemberByUsername(String username) {
 		Member member = memberRepository.findFirstByUsername(username)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-		return RegisterDto.getMemberResponse.of(member);
+			.orElseThrow(UserNotFoundException::new);
+		return RegisterDto.GetMemberResponse.of(member);
 	}
 
-	public boolean changePassword(RegisterDto.passwordChangeRequest request) {
+	public boolean changePassword(RegisterDto.PasswordChangeRequest request) {
 		return memberRepository.findFirstByUsername(request.getUsername())
 			.map(member -> {
 				if (member.isPasswordMatch(request.getPassword())) {
@@ -71,10 +73,10 @@ public class MemberService {
 	@Transactional(readOnly = true)
 	public AuthDto.LoginResponse login(AuthDto.LoginRequest request, HttpSession session) {
 		Member member = memberRepository.findFirstByUsername(request.getUsername())
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+			.orElseThrow(UserNotFoundException::new);
 		boolean isPasswordMatch = member.isPasswordMatch(request.getPassword());
 		if (!isPasswordMatch) {
-			throw new IllegalArgumentException("아이디와 비밀번호를 확인해주세요.");
+			throw new IdPasswordNotMatchException();
 		}
 
 		SessionManageUtils.addSession(session, "username", member.getMemberId());
@@ -83,18 +85,18 @@ public class MemberService {
 	}
 
 	@Transactional
-	public RegisterDto.updateMemberResponse updateMember(String username, RegisterDto.updateMemberRequest request, String modifier) {
+	public RegisterDto.UpdateMemberResponse updateMember(String username, RegisterDto.UpdateMemberRequest request, String modifier) {
 		Member member = memberRepository.findFirstByUsername(username)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+			.orElseThrow(UserNotFoundException::new);
 		member.update(request.getDescription(), modifier);
 		Member updatedMember = memberRepository.save(member);
-		return RegisterDto.updateMemberResponse.of(updatedMember);
+		return RegisterDto.UpdateMemberResponse.of(updatedMember);
 	}
 
 	@Transactional
 	public void deleteMember(String username, String modifier) {
 		Member member = memberRepository.findFirstByUsername(username)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+			.orElseThrow(UserNotFoundException::new);
 		member.delete(modifier);
 		memberRepository.save(member);
 	}

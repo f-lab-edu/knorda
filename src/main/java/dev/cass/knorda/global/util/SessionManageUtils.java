@@ -2,10 +2,14 @@ package dev.cass.knorda.global.util;
 
 import org.springframework.stereotype.Component;
 
+import dev.cass.knorda.global.Exception.NullSessionExeption;
 import jakarta.servlet.http.HttpSession;
 
 @Component
 public class SessionManageUtils {
+
+	private SessionManageUtils() {
+	}
 
 	public static void invalidate(HttpSession session) {
 		session.invalidate();
@@ -17,7 +21,7 @@ public class SessionManageUtils {
 
 	public static Object getSession(HttpSession session, String key) {
 		if(session == null){
-			throw new IllegalArgumentException("session is null");
+			throw new NullSessionExeption();
 		}
 		return session.getAttribute(key);
 	}

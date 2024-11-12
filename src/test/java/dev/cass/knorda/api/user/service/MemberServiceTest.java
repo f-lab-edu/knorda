@@ -39,7 +39,7 @@ class MemberServiceTest {
 		RegisterDto.RegisterRequest request = new RegisterDto.RegisterRequest("test", "test", "test");
 
 		// when
-		RegisterDto.registerResponse result = memberService.saveUser(request);
+		RegisterDto.RegisterResponse result = memberService.saveUser(request);
 
 		// then
 		assertEquals(request.getUsername(), result.getUsername());
@@ -74,7 +74,7 @@ class MemberServiceTest {
 	@Test
 	void changePassword() {
 		// given
-		RegisterDto.passwordChangeRequest request = new RegisterDto.passwordChangeRequest("admin", "admin", "admin");
+		RegisterDto.PasswordChangeRequest request = new RegisterDto.PasswordChangeRequest("admin", "admin", "admin");
 
 		// when
 		boolean result = memberService.changePassword(request);
@@ -87,7 +87,7 @@ class MemberServiceTest {
 	@Test
 	void changePasswordNoUser() {
 		// given
-		RegisterDto.passwordChangeRequest request = new RegisterDto.passwordChangeRequest("test", "test", "test");
+		RegisterDto.PasswordChangeRequest request = new RegisterDto.PasswordChangeRequest("test", "test", "test");
 
 		// when
 		boolean result = memberService.changePassword(request);
@@ -100,7 +100,7 @@ class MemberServiceTest {
 	@Test
 	void changePasswordNotMatch() {
 		// given
-		RegisterDto.passwordChangeRequest request = new RegisterDto.passwordChangeRequest("admin", "admin1", "test");
+		RegisterDto.PasswordChangeRequest request = new RegisterDto.PasswordChangeRequest("admin", "admin1", "test");
 
 		// when
 		boolean result = memberService.changePassword(request);
@@ -146,10 +146,10 @@ class MemberServiceTest {
 	@Test
 	void updateMember() {
 		// given
-		RegisterDto.updateMemberRequest request = new RegisterDto.updateMemberRequest("description test");
+		RegisterDto.UpdateMemberRequest request = new RegisterDto.UpdateMemberRequest("description test");
 
 		// when
-		RegisterDto.updateMemberResponse result = memberService.updateMember("admin", request, "admin");
+		RegisterDto.UpdateMemberResponse result = memberService.updateMember("admin", request, "admin");
 
 		// then
 		assertEquals(request.getDescription(), result.getDescription());
@@ -159,7 +159,7 @@ class MemberServiceTest {
 	@Test
 	void updateMemberNoUser() {
 		// given
-		RegisterDto.updateMemberRequest request = new RegisterDto.updateMemberRequest("description test");
+		RegisterDto.UpdateMemberRequest request = new RegisterDto.UpdateMemberRequest("description test");
 
 		// when
 		assertThrows(IllegalArgumentException.class, () -> memberService.updateMember("test", request, "admin"));
@@ -186,7 +186,7 @@ class MemberServiceTest {
 	@Test
 	void findMemberByUsername() {
 		// when
-		RegisterDto.getMemberResponse result = memberService.findMemberByUsername("admin");
+		RegisterDto.GetMemberResponse result = memberService.findMemberByUsername("admin");
 
 		// then
 		assertEquals("admin", result.getUsername());

@@ -43,7 +43,7 @@ public class MemberController {
 	 * RequestBody - HTTP 요청의 body 내용을 자바 객체로 매핑하는 역할을 하는 어노테이션
 	 */
 	@PostMapping("/users")
-	public ResponseEntity<RegisterDto.registerResponse> saveUser(
+	public ResponseEntity<RegisterDto.RegisterResponse> saveUser(
 		@RequestBody @Valid RegisterDto.RegisterRequest request) {
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
@@ -51,7 +51,7 @@ public class MemberController {
 	}
 
 	@GetMapping("/users")
-	public ResponseEntity<RegisterDto.getMemberResponse> getLoggedInUser(HttpSession session) {
+	public ResponseEntity<RegisterDto.GetMemberResponse> getLoggedInUser(HttpSession session) {
 		String username = SessionManageUtils.getUsername(session);
 		return ResponseEntity
 			.status(HttpStatus.OK)
@@ -59,16 +59,16 @@ public class MemberController {
 	}
 
 	@GetMapping("/users/{username}")
-	public ResponseEntity<RegisterDto.getMemberResponse> getMember(@PathVariable String username) {
+	public ResponseEntity<RegisterDto.GetMemberResponse> getMember(@PathVariable String username) {
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(memberService.findMemberByUsername(username));
 	}
 
 	@PutMapping("/users")
-	public ResponseEntity<RegisterDto.updateMemberResponse> updateMember(
+	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(
 		HttpSession session,
-		@RequestBody @Valid RegisterDto.updateMemberRequest request) {
+		@RequestBody @Valid RegisterDto.UpdateMemberRequest request) {
 		String username = SessionManageUtils.getUsername(session);
 		return ResponseEntity
 			.status(HttpStatus.OK)
@@ -76,10 +76,10 @@ public class MemberController {
 	}
 
 	@PutMapping("/users/{username}")
-	public ResponseEntity<RegisterDto.updateMemberResponse> updateMember(
+	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(
 		HttpSession session,
 		@PathVariable String username,
-		@RequestBody @Valid RegisterDto.updateMemberRequest request) {
+		@RequestBody @Valid RegisterDto.UpdateMemberRequest request) {
 		String loggedInUser = SessionManageUtils.getUsername(session);
 		return ResponseEntity
 			.status(HttpStatus.OK)
@@ -110,10 +110,10 @@ public class MemberController {
 	 * PathVariable - URL 경로의 일부를 매개변수로 사용할 수 있게 해주는 어노테이션
 	 */
 	@GetMapping("/users/duplicate-id/{username}")
-	public ResponseEntity<RegisterDto.isExistResponse> isExistUser(@PathVariable String username) {
+	public ResponseEntity<RegisterDto.IsExistResponse> isExistUser(@PathVariable String username) {
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(new RegisterDto.isExistResponse(memberService.isExistUsername(username)));
+			.body(new RegisterDto.IsExistResponse(memberService.isExistUsername(username)));
 	}
 
 }

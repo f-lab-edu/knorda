@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 
 public class RegisterDto {
 
+	private RegisterDto() {
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public static class RegisterRequest {
@@ -38,7 +41,7 @@ public class RegisterDto {
 
 	@Getter
 	@AllArgsConstructor
-	public static class passwordChangeRequest {
+	public static class PasswordChangeRequest {
 		@NotNull
 		@Size(min = 4, max = 20)
 		private String username;
@@ -54,23 +57,23 @@ public class RegisterDto {
 
 	@Getter
 	@AllArgsConstructor
-	public static class isExistResponse {
+	public static class IsExistResponse {
 		private boolean isExist;
 	}
 
 	@Getter
 	@AllArgsConstructor
-	public static class registerResponse {
+	public static class RegisterResponse {
 		private String username;
 
-		public static registerResponse of(Member member) {
-			return new registerResponse(member.getUsername());
+		public static RegisterResponse of(Member member) {
+			return new RegisterResponse(member.getUsername());
 		}
 	}
 
 	@Getter
 	@AllArgsConstructor
-	public static class getMemberResponse {
+	public static class GetMemberResponse {
 		private String username;
 		private String description;
 		/**
@@ -84,26 +87,26 @@ public class RegisterDto {
 		@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
 		private LocalDateTime modifiedAt;
 
-		public static getMemberResponse of(Member member) {
-			return new getMemberResponse(member.getUsername(), member.getDescription(), member.getLastLoggedAt(), member.getCreatedAt(), member.getModifiedAt());
+		public static GetMemberResponse of(Member member) {
+			return new GetMemberResponse(member.getUsername(), member.getDescription(), member.getLastLoggedAt(), member.getCreatedAt(), member.getModifiedAt());
 		}
 	}
 
 	@Getter
 	@AllArgsConstructor
-	public static class updateMemberResponse {
+	public static class UpdateMemberResponse {
 		private String username;
 		private String description;
 
-		public static updateMemberResponse of(Member member) {
-			return new updateMemberResponse(member.getUsername(), member.getDescription());
+		public static UpdateMemberResponse of(Member member) {
+			return new UpdateMemberResponse(member.getUsername(), member.getDescription());
 		}
 	}
 
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class updateMemberRequest {
+	public static class UpdateMemberRequest {
 		@NotNull
 		private String description;
 	}
