@@ -2,7 +2,7 @@ package dev.cass.knorda.global.util;
 
 import org.springframework.stereotype.Component;
 
-import dev.cass.knorda.global.Exception.NullSessionExeption;
+import dev.cass.knorda.global.exception.NullSessionExeption;
 import jakarta.servlet.http.HttpSession;
 
 @Component

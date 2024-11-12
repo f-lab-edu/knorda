@@ -20,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 public final class EncryptUtils {
 	private static String SALT;
 
-
-
 	/**
 	 * Value - 해당 필드에 주입할 값을 지정하는 어노테이션
 	 * Value("${encrypt.salt}") - application.properties, 혹은 yaml에 정의된 encrypt.salt 값을 매개 변수로 주입

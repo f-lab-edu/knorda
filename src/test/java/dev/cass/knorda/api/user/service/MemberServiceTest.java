@@ -67,7 +67,7 @@ class MemberServiceTest {
 		System.out.println(result.getFirst().getMemberId());
 
 		// then
-		assertEquals(result.getFirst().getMemberId(), 1);
+		assertEquals(1, result.getFirst().getMemberId());
 	}
 
 	@DisplayName("비밀번호 변경")

@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import dev.cass.knorda.api.user.Exception.IdPasswordNotMatchException;
-import dev.cass.knorda.api.user.Exception.UserNotFoundException;
+import dev.cass.knorda.api.user.exception.IdPasswordNotMatchException;
+import dev.cass.knorda.api.user.exception.UserNotFoundException;
 import dev.cass.knorda.api.user.dto.AuthDto;
 import dev.cass.knorda.api.user.dto.RegisterDto;
 import dev.cass.knorda.domain.member.Member;
