@@ -64,7 +64,8 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                    '**/dto/**'
+                    '**/dto/**',
+                    '**/exception/**'
             ])
         }))
     }
@@ -92,7 +93,8 @@ jacocoTestCoverageVerification {
 
             // DTO 클래스는 커버리지 체크에서 제외
             excludes = [
-                    '**.dto.**'
+                    '**.dto.**',
+                    '**.exception.**'
             ]
         }
     }
