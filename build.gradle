@@ -35,7 +35,7 @@ dependencies {
 
     // Test dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    runtimeOnly 'com.h2database:h2'
+    testRuntimeOnly 'com.h2database:h2'
 }
 
 test {
