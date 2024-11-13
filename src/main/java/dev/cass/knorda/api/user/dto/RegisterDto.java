@@ -19,6 +19,15 @@ public class RegisterDto {
 	@Getter
 	@AllArgsConstructor
 	public static class RegisterRequest {
+		/**
+		 * NotNull - Bean Validation의 어노테이션. 해당 변수가 null이 아님을 확인할 것을 의미
+		 * Size - Bean Validation의 어노테이션. 해당 변수의 길이를 확인할 것을 의미
+		 * Bean Validation - Java EE 6부터 추가된 기능. 객체의 유효성을 검사하는 기능을 제공
+		 * Spring에서는 Controller에서 @Valid 어노테이션을 사용하여 Bean Validation을 사용할 수 있다
+		 * 클라이언트에서 request를 보내면 dispatcher servlet이 해당 request를 받아서 controller에 전달하기 위해 탐색하게 되는데,
+		 * 이 때, RequestResponseBodyMethodProcessor 클래스에서 resolverArgument 메소드를 호출하게 되고,
+		 * 거기에서 Valid, Validated 어노테이션이 붙은 객체를 찾아서 검증하게 되고, Error가 있을 경우 MethodArgumentNotValidException을 발생시킨다
+		 */
 		@NotNull
 		@Size(min = 4, max = 20)
 		private String username;

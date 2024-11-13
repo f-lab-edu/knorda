@@ -21,6 +21,9 @@ public class AuthController {
 
 	private final MemberService memberService;
 
+	/**
+	 * Valid - 해당 객체를 Dispatcher Servlet을 탐색하는 과정에서 검증하겠다는 의미
+	 */
 	@PostMapping("/login")
 	public ResponseEntity<AuthDto.LoginResponse> login(HttpSession session,
 		@RequestBody @Valid AuthDto.LoginRequest request) {
