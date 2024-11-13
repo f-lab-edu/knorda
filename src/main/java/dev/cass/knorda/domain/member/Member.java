@@ -36,7 +36,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "member")
+@Table(name = "`member`")
 public class Member {
 	/**
 	 * GeneratedValue - JPA의 어노테이션. 엔티티의 기본 키를 자동 생성하는 방법을 지정
