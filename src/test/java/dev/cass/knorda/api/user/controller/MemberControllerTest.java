@@ -55,15 +55,15 @@ class MemberControllerTest {
 
 	@DisplayName("회원가입")
 	@Test
-	void saveUser() throws Exception {
+	void saveMember() throws Exception {
 		// Given
 		RegisterDto.RegisterRequest registerRequest = new RegisterDto.RegisterRequest("test", "test1234", "test");
 		RegisterDto.RegisterResponse registerResponse = new RegisterDto.RegisterResponse("test");
 
-		doReturn(registerResponse).when(memberService).saveUser(any(RegisterDto.RegisterRequest.class));
+		doReturn(registerResponse).when(memberService).saveMember(any(RegisterDto.RegisterRequest.class));
 
 		// When
-		ResultActions resultActions = mockMvc.perform(post("/api/v1/users")
+		ResultActions resultActions = mockMvc.perform(post("/api/v1/members")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(registerRequest)));
 
@@ -75,12 +75,12 @@ class MemberControllerTest {
 
 	@DisplayName("회원가입 validation 틀렸을때")
 	@Test
-	void saveUserValidation() throws Exception {
+	void saveMemberValidation() throws Exception {
 		// Given
 		RegisterDto.RegisterRequest registerRequest = new RegisterDto.RegisterRequest("", "test", "test");
 
 		// When
-		ResultActions resultActions = mockMvc.perform(post("/api/v1/users")
+		ResultActions resultActions = mockMvc.perform(post("/api/v1/members")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(registerRequest)));
 
@@ -89,18 +89,17 @@ class MemberControllerTest {
 			.andExpect(status().isBadRequest());
 	}
 
-
 	@DisplayName("이름 중복 체크")
 	@Test
-	void isExistUser() throws Exception {
+	void isExistMember() throws Exception {
 		// Given
 		String name = "admin";
 		RegisterDto.IsExistResponse isExistResponse = new RegisterDto.IsExistResponse(true);
 
-		doReturn(true).when(memberService).isExistUsername(name);
+		doReturn(true).when(memberService).isExistMemberName(name);
 
 		// When
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/users/duplicate-id/{username}", name));
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/members/duplicate-id/{memberName}", name));
 
 		// Then
 		resultActions
@@ -113,13 +112,16 @@ class MemberControllerTest {
 	void getMember() throws Exception {
 		// Given
 		String name = "admin";
-		RegisterDto.GetMemberResponse registerResponse = new RegisterDto.GetMemberResponse("admin", "admin", null, null, null);
+		int id = 1;
+		RegisterDto.GetMemberResponse registerResponse = new RegisterDto.GetMemberResponse("admin", "admin", null, null,
+			null);
 
-		doReturn(registerResponse).when(memberService).findMemberByUsername(name);
+		doReturn(registerResponse).when(memberService).findMemberByMemberId(id);
 
 		// When
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/users")
-			.sessionAttr("username", name));
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/members")
+			.sessionAttr("memberName", name)
+			.sessionAttr("memberId", id));
 
 		// Then
 		resultActions
@@ -129,16 +131,19 @@ class MemberControllerTest {
 
 	@DisplayName("사용자 조회")
 	@Test
-	void getMemberByUsername() throws Exception {
+	void getMemberByMemberName() throws Exception {
 		// Given
 		String name = "admin";
-		RegisterDto.GetMemberResponse registerResponse = new RegisterDto.GetMemberResponse("admin", "admin", null, null, null);
+		int id = 1;
+		RegisterDto.GetMemberResponse registerResponse = new RegisterDto.GetMemberResponse("admin", "admin", null, null,
+			null);
 
-		doReturn(registerResponse).when(memberService).findMemberByUsername(name);
+		doReturn(registerResponse).when(memberService).findMemberByMemberId(id);
 
 		// When
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/users/{username}", name)
-			.sessionAttr("username", name));
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/members/{memberId}", id)
+			.sessionAttr("memberName", name)
+			.sessionAttr("memberId", id));
 
 		// Then
 		resultActions
@@ -151,16 +156,20 @@ class MemberControllerTest {
 	void updateMember() throws Exception {
 		// Given
 		String name = "admin";
+		int id = 1;
 		RegisterDto.UpdateMemberRequest updateMemberRequest = new RegisterDto.UpdateMemberRequest("description change");
-		RegisterDto.UpdateMemberResponse updateMemberResponse = new RegisterDto.UpdateMemberResponse("admin", "description change");
+		RegisterDto.UpdateMemberResponse updateMemberResponse = new RegisterDto.UpdateMemberResponse("admin",
+			"description change");
 
-		doReturn(updateMemberResponse).when(memberService).updateMember(eq(name), any(RegisterDto.UpdateMemberRequest.class), eq(name));
+		doReturn(updateMemberResponse).when(memberService)
+			.updateMember(eq(id), any(RegisterDto.UpdateMemberRequest.class), eq(name));
 
 		// When
-		ResultActions resultActions = mockMvc.perform(put("/api/v1/users")
+		ResultActions resultActions = mockMvc.perform(put("/api/v1/members")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(updateMemberRequest))
-			.sessionAttr("username", name));
+			.sessionAttr("memberName", name)
+			.sessionAttr("memberId", id));
 
 		// Then
 		resultActions
@@ -170,19 +179,23 @@ class MemberControllerTest {
 
 	@DisplayName("사용자 수정")
 	@Test
-	void updateMemberByUsername() throws Exception {
+	void updateMemberByMemberName() throws Exception {
 		// Given
 		String name = "admin";
+		int id = 1;
 		RegisterDto.UpdateMemberRequest updateMemberRequest = new RegisterDto.UpdateMemberRequest("description change");
-		RegisterDto.UpdateMemberResponse updateMemberResponse = new RegisterDto.UpdateMemberResponse("admin", "description change");
+		RegisterDto.UpdateMemberResponse updateMemberResponse = new RegisterDto.UpdateMemberResponse("admin",
+			"description change");
 
-		doReturn(updateMemberResponse).when(memberService).updateMember(eq(name), any(RegisterDto.UpdateMemberRequest.class), eq(name));
+		doReturn(updateMemberResponse).when(memberService)
+			.updateMember(eq(id), any(RegisterDto.UpdateMemberRequest.class), eq(name));
 
 		// When
-		ResultActions resultActions = mockMvc.perform(put("/api/v1/users/{username}", name)
+		ResultActions resultActions = mockMvc.perform(put("/api/v1/members/{memberId}", id)
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(updateMemberRequest))
-			.sessionAttr("username", name));
+			.sessionAttr("memberName", name)
+			.sessionAttr("memberId", id));
 
 		// Then
 		resultActions
@@ -197,8 +210,9 @@ class MemberControllerTest {
 		String name = "admin";
 
 		// When
-		ResultActions resultActions = mockMvc.perform(delete("/api/v1/users")
-			.sessionAttr("username", name));
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/members")
+			.sessionAttr("memberName", name)
+			.sessionAttr("memberId", 1));
 
 		// Then
 		resultActions
@@ -207,13 +221,15 @@ class MemberControllerTest {
 
 	@DisplayName("사용자 삭제")
 	@Test
-	void deleteMemberByUsername() throws Exception {
+	void deleteMemberByMemberName() throws Exception {
 		// Given
 		String name = "admin";
+		int id = 1;
 
 		// When
-		ResultActions resultActions = mockMvc.perform(delete("/api/v1/users/{username}", name)
-			.sessionAttr("username", name));
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/members/{memberId}", id)
+			.sessionAttr("memberName", name)
+			.sessionAttr("memberId", 1));
 
 		// Then
 		resultActions

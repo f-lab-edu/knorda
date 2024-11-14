@@ -42,65 +42,67 @@ public class MemberController {
 	/**
 	 * RequestBody - HTTP 요청의 body 내용을 자바 객체로 매핑하는 역할을 하는 어노테이션
 	 */
-	@PostMapping("/users")
-	public ResponseEntity<RegisterDto.RegisterResponse> saveUser(
+	@PostMapping("/members")
+	public ResponseEntity<RegisterDto.RegisterResponse> saveMember(
 		@RequestBody @Valid RegisterDto.RegisterRequest request) {
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
-			.body(memberService.saveUser(request));
+			.body(memberService.saveMember(request));
 	}
 
-	@GetMapping("/users")
-	public ResponseEntity<RegisterDto.GetMemberResponse> getLoggedInUser(HttpSession session) {
-		String username = SessionManageUtils.getUsername(session);
+	@GetMapping("/members")
+	public ResponseEntity<RegisterDto.GetMemberResponse> getLoggedInMember(HttpSession session) {
+		int memberId = SessionManageUtils.getMemberId(session);
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(memberService.findMemberByUsername(username));
+			.body(memberService.findMemberByMemberId(memberId));
 	}
 
-	@GetMapping("/users/{username}")
-	public ResponseEntity<RegisterDto.GetMemberResponse> getMember(@PathVariable String username) {
+	@GetMapping("/members/{memberId}")
+	public ResponseEntity<RegisterDto.GetMemberResponse> getMember(@PathVariable int memberId) {
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(memberService.findMemberByUsername(username));
+			.body(memberService.findMemberByMemberId(memberId));
 	}
 
-	@PutMapping("/users")
+	@PutMapping("/members")
 	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(
 		HttpSession session,
 		@RequestBody @Valid RegisterDto.UpdateMemberRequest request) {
-		String username = SessionManageUtils.getUsername(session);
+		String memberName = SessionManageUtils.getMemberName(session);
+		int memberId = SessionManageUtils.getMemberId(session);
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(memberService.updateMember(username, request, username));
+			.body(memberService.updateMember(memberId, request, memberName));
 	}
 
-	@PutMapping("/users/{username}")
+	@PutMapping("/members/{memberId}")
 	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(
 		HttpSession session,
-		@PathVariable String username,
+		@PathVariable int memberId,
 		@RequestBody @Valid RegisterDto.UpdateMemberRequest request) {
-		String loggedInUser = SessionManageUtils.getUsername(session);
+		String loggedInMember = SessionManageUtils.getMemberName(session);
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(memberService.updateMember(username, request, loggedInUser));
+			.body(memberService.updateMember(memberId, request, loggedInMember));
 	}
 
-	@DeleteMapping("/users")
+	@DeleteMapping("/members")
 	public ResponseEntity<Void> deleteMember(HttpSession session) {
-		String username = SessionManageUtils.getUsername(session);
-		memberService.deleteMember(username, username);
+		String memberName = SessionManageUtils.getMemberName(session);
+		int memberId = SessionManageUtils.getMemberId(session);
+		memberService.deleteMember(memberId, memberName);
 		return ResponseEntity
 			.status(HttpStatus.NO_CONTENT)
 			.build();
 	}
 
-	@DeleteMapping("/users/{username}")
+	@DeleteMapping("/members/{memberId}")
 	public ResponseEntity<Void> deleteMember(
 		HttpSession session,
-		@PathVariable String username) {
-		String loggedInUser = SessionManageUtils.getUsername(session);
-		memberService.deleteMember(username, loggedInUser);
+		@PathVariable int memberId) {
+		String loggedInUser = SessionManageUtils.getMemberName(session);
+		memberService.deleteMember(memberId, loggedInUser);
 		return ResponseEntity
 			.status(HttpStatus.NO_CONTENT)
 			.build();
@@ -109,11 +111,11 @@ public class MemberController {
 	/**
 	 * PathVariable - URL 경로의 일부를 매개변수로 사용할 수 있게 해주는 어노테이션
 	 */
-	@GetMapping("/users/duplicate-id/{username}")
-	public ResponseEntity<RegisterDto.IsExistResponse> isExistUser(@PathVariable String username) {
+	@GetMapping("/members/duplicate-id/{memberName}")
+	public ResponseEntity<RegisterDto.IsExistResponse> isExistMember(@PathVariable String memberName) {
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(new RegisterDto.IsExistResponse(memberService.isExistUsername(username)));
+			.body(new RegisterDto.IsExistResponse(memberService.isExistMemberName(memberName)));
 	}
 
 }

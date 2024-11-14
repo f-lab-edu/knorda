@@ -7,14 +7,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import dev.cass.knorda.domain.member.Member;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RegisterDto {
-
-	private RegisterDto() {
-	}
 
 	@Getter
 	@AllArgsConstructor
@@ -30,7 +29,7 @@ public class RegisterDto {
 		 */
 		@NotNull
 		@Size(min = 4, max = 20)
-		private String username;
+		private String memberName;
 
 		@NotNull
 		@Size(min = 5)
@@ -41,7 +40,7 @@ public class RegisterDto {
 
 		public Member toEntity() {
 			return Member.builder()
-				.username(username)
+				.memberName(memberName)
 				.password(password)
 				.description(description)
 				.build();
@@ -53,7 +52,7 @@ public class RegisterDto {
 	public static class PasswordChangeRequest {
 		@NotNull
 		@Size(min = 4, max = 20)
-		private String username;
+		private String memberName;
 
 		@NotNull
 		@Size(min = 5)
@@ -73,42 +72,43 @@ public class RegisterDto {
 	@Getter
 	@AllArgsConstructor
 	public static class RegisterResponse {
-		private String username;
+		private String memberName;
 
 		public static RegisterResponse of(Member member) {
-			return new RegisterResponse(member.getUsername());
+			return new RegisterResponse(member.getMemberName());
 		}
 	}
 
 	@Getter
 	@AllArgsConstructor
 	public static class GetMemberResponse {
-		private String username;
+		private String memberName;
 		private String description;
 		/**
 		 * JsonFormat - Jackson 라이브러리의 어노테이션. JSON으로 변환될 때, 날짜 형식을 어떻게 직렬화할지 지정
 		 * String 형식으로, pattern의 "yyyy-MM-dd'T'HH:mm:ss" 형식으로 직렬화하고, timezone을 "Asia/Seoul"로 설정
 		 */
-		@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
 		private LocalDateTime lastLoggedAt;
-		@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
 		private LocalDateTime createdAt;
-		@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
 		private LocalDateTime modifiedAt;
 
 		public static GetMemberResponse of(Member member) {
-			return new GetMemberResponse(member.getUsername(), member.getDescription(), member.getLastLoggedAt(), member.getCreatedAt(), member.getModifiedAt());
+			return new GetMemberResponse(member.getMemberName(), member.getDescription(), member.getLastLoggedAt(),
+				member.getCreatedAt(), member.getModifiedAt());
 		}
 	}
 
 	@Getter
 	@AllArgsConstructor
 	public static class UpdateMemberResponse {
-		private String username;
+		private String memberName;
 		private String description;
 
 		public static UpdateMemberResponse of(Member member) {
-			return new UpdateMemberResponse(member.getUsername(), member.getDescription());
+			return new UpdateMemberResponse(member.getMemberName(), member.getDescription());
 		}
 	}
 

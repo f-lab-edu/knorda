@@ -24,7 +24,6 @@ public final class EncryptUtils {
 	 * Value - 해당 필드에 주입할 값을 지정하는 어노테이션
 	 * Value("${encrypt.salt}") - application.properties, 혹은 yaml에 정의된 encrypt.salt 값을 매개 변수로 주입
 	 * 원래는 변수에 붙이면 되나, static 변수에 해당 값을 초기화시키기 위해 setter 메소드를 생성해서 메소드에 붙여줌
-	 * 왜냐하면 @Value
 	 */
 	@Value("${encrypt.salt}")
 	public void setSalt(String salt) {

@@ -9,11 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import dev.cass.knorda.api.user.dto.AuthDto;
 import dev.cass.knorda.api.user.dto.RegisterDto;
 import dev.cass.knorda.domain.member.Member;
 
@@ -30,29 +28,27 @@ class MemberServiceTest {
 	@Autowired
 	private MemberService memberService;
 
-	private MockHttpSession session = new MockHttpSession();
-
 	@DisplayName("회원 저장")
 	@Test
-	void saveUser() {
+	void saveMember() {
 		// given
 		RegisterDto.RegisterRequest request = new RegisterDto.RegisterRequest("test", "test", "test");
 
 		// when
-		RegisterDto.RegisterResponse result = memberService.saveUser(request);
+		RegisterDto.RegisterResponse result = memberService.saveMember(request);
 
 		// then
-		assertEquals(request.getUsername(), result.getUsername());
+		assertEquals(request.getMemberName(), result.getMemberName());
 	}
 
 	@DisplayName("회원 존재 여부")
 	@Test
-	void isExistUsername() {
+	void isExistMemberName() {
 		// given
-		String username = "admin";
+		String memberName = "admin";
 
 		// when
-		boolean result = memberService.isExistUsername(username);
+		boolean result = memberService.isExistMemberName(memberName);
 
 		// then
 		assertTrue(result);
@@ -109,39 +105,6 @@ class MemberServiceTest {
 		assertFalse(result);
 	}
 
-	@DisplayName("로그인")
-	@Test
-	void login() {
-		// given
-		AuthDto.LoginRequest request = new AuthDto.LoginRequest("admin", "admin");
-
-		// when
-		AuthDto.LoginResponse result = memberService.login(request, session);
-
-		// then
-		assertEquals(request.getUsername(), result.getUsername());
-	}
-
-	@DisplayName("로그인 사용자 없음")
-	@Test
-	void loginNoUser() {
-		// given
-		AuthDto.LoginRequest request = new AuthDto.LoginRequest("test", "test");
-
-		// when
-		assertThrows(IllegalArgumentException.class, () -> memberService.login(request, session));
-	}
-
-	@DisplayName("로그인 비밀번호 불일치")
-	@Test
-	void loginPasswordNotMatch() {
-		// given
-		AuthDto.LoginRequest request = new AuthDto.LoginRequest("admin", "admin1");
-
-		// when
-		assertThrows(IllegalArgumentException.class, () -> memberService.login(request, session));
-	}
-
 	@DisplayName("사용자 갱신")
 	@Test
 	void updateMember() {
@@ -149,7 +112,7 @@ class MemberServiceTest {
 		RegisterDto.UpdateMemberRequest request = new RegisterDto.UpdateMemberRequest("description test");
 
 		// when
-		RegisterDto.UpdateMemberResponse result = memberService.updateMember("admin", request, "admin");
+		RegisterDto.UpdateMemberResponse result = memberService.updateMember(1, request, "admin");
 
 		// then
 		assertEquals(request.getDescription(), result.getDescription());
@@ -162,7 +125,7 @@ class MemberServiceTest {
 		RegisterDto.UpdateMemberRequest request = new RegisterDto.UpdateMemberRequest("description test");
 
 		// when
-		assertThrows(IllegalArgumentException.class, () -> memberService.updateMember("test", request, "admin"));
+		assertThrows(IllegalArgumentException.class, () -> memberService.updateMember(2, request, "admin"));
 	}
 
 	@DisplayName("사용자 삭제")
@@ -172,7 +135,7 @@ class MemberServiceTest {
 		memberService.deleteMember("admin", "admin");
 
 		// then
-		assertFalse(memberService.isExistUser("admin"));
+		assertFalse(memberService.isExistMember("admin"));
 	}
 
 	@DisplayName("사용자 삭제 사용자 없음")
@@ -182,20 +145,20 @@ class MemberServiceTest {
 		assertThrows(IllegalArgumentException.class, () -> memberService.deleteMember("test", "admin"));
 	}
 
-	@DisplayName("사용자명으로 사용자 조회")
+	@DisplayName("사용자 id로 사용자 조회")
 	@Test
-	void findMemberByUsername() {
+	void findMemberByMemberName() {
 		// when
-		RegisterDto.GetMemberResponse result = memberService.findMemberByUsername("admin");
+		RegisterDto.GetMemberResponse result = memberService.findMemberByMemberId(1);
 
 		// then
-		assertEquals("admin", result.getUsername());
+		assertEquals("admin", result.getMemberName());
 	}
 
 	@DisplayName("사용자명으로 사용자 조회 사용자 없음")
 	@Test
-	void findMemberByUsernameNoUser() {
+	void findMemberByMemberNameNoUser() {
 		// when
-		assertThrows(IllegalArgumentException.class, () -> memberService.findMemberByUsername("test"));
+		assertThrows(IllegalArgumentException.class, () -> memberService.findMemberByMemberId(10));
 	}
 }

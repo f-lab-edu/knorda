@@ -68,8 +68,8 @@ public class Member {
 	@Id
 	private Integer memberId;
 
-	@Column(name = "username")
-	private String username;
+	@Column(name = "member_name")
+	private String memberName;
 
 	@Setter(AccessLevel.NONE)
 	@Column(name = "password")

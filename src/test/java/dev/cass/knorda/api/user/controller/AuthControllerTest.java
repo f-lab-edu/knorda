@@ -18,11 +18,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.cass.knorda.api.user.dto.AuthDto;
-import dev.cass.knorda.api.user.service.MemberService;
+import dev.cass.knorda.api.user.service.AuthService;
 import dev.cass.knorda.global.util.SessionManageUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +30,7 @@ class AuthControllerTest {
 	private AuthController authController;
 
 	@Mock
-	private MemberService memberService;
+	private AuthService authService;
 
 	private MockMvc mockMvc;
 	ObjectMapper objectMapper = new ObjectMapper();
@@ -48,7 +47,7 @@ class AuthControllerTest {
 		// Given
 		AuthDto.LoginRequest loginRequest = new AuthDto.LoginRequest("admin", "admin");
 
-		doReturn(new AuthDto.LoginResponse(loginRequest.getUsername())).when(memberService).login(any(), any());
+		doReturn(new AuthDto.LoginResponse(loginRequest.getMemberName())).when(authService).login(any(), any());
 
 		// When
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/login")
@@ -58,7 +57,7 @@ class AuthControllerTest {
 		// Then
 		resultActions
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.username").value(loginRequest.getUsername()));
+			.andExpect(jsonPath("$.memberName").value(loginRequest.getMemberName()));
 	}
 
 	@DisplayName("로그인 비밀번호 입력안함")
@@ -81,7 +80,7 @@ class AuthControllerTest {
 	@Test
 	void logout() throws Exception {
 		// Given
-		SessionManageUtils.addSession(session, "username", "admin");
+		SessionManageUtils.addSession(session, "memberName", "admin");
 
 		// When
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/logout")
@@ -92,21 +91,4 @@ class AuthControllerTest {
 			.andExpect(status().isOk());
 		assertTrue(session.isInvalid());
 	}
-
-	@DisplayName("로그인 테스트")
-	@Test
-	void loginTest() throws Exception {
-		// Given
-		SessionManageUtils.addSession(session, "username", "admin");
-
-		// When
-		ResultActions resultActions = mockMvc.perform(get("/api/v1/login-test")
-			.session(session));
-
-		// Then
-		resultActions
-			.andExpect(status().isOk())
-			.andExpect(content().string("admin"));
-	}
-
 }
