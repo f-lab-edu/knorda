@@ -124,7 +124,7 @@ class MemberControllerTest {
 			null,
 			null);
 
-		doReturn(registerResponse).when(memberService).findMemberByMemberId(id);
+		doReturn(registerResponse).when(memberService).findMemberResponseByMemberId(id);
 
 		// When
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/members/me")
@@ -172,7 +172,7 @@ class MemberControllerTest {
 			null,
 			null);
 
-		doReturn(registerResponse).when(memberService).findMemberByMemberId(id);
+		doReturn(registerResponse).when(memberService).findMemberResponseByMemberId(id);
 
 		// When
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/members/{memberId}", id)

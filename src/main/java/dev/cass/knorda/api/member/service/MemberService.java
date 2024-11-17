@@ -51,7 +51,7 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public RegisterDto.GetMemberResponse findMemberByMemberId(int memberId) {
+	public RegisterDto.GetMemberResponse findMemberResponseByMemberId(int memberId) {
 		Member member = memberRepository.findFirstByMemberId(memberId)
 			.orElseThrow(MemberNotFoundException::new);
 		return RegisterDto.GetMemberResponse.of(member);
@@ -87,5 +87,11 @@ public class MemberService {
 			.orElseThrow(MemberNotFoundException::new);
 		member.delete(modifier);
 		memberRepository.save(member);
+	}
+
+	@Transactional(readOnly = true)
+	public Member findMemberByMemberName(String memberName) {
+		return memberRepository.findFirstByMemberName(memberName)
+			.orElseThrow(MemberNotFoundException::new);
 	}
 }
