@@ -1,4 +1,4 @@
-package dev.cass.knorda.api.user.controller;
+package dev.cass.knorda.api.member.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -20,8 +20,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import dev.cass.knorda.api.user.dto.AuthDto;
-import dev.cass.knorda.api.user.service.AuthService;
+import dev.cass.knorda.api.member.dto.AuthDto;
+import dev.cass.knorda.api.member.service.AuthService;
 import dev.cass.knorda.global.util.SessionManageUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,7 +80,7 @@ class AuthControllerTest {
 	@Test
 	void logout() throws Exception {
 		// Given
-		SessionManageUtils.addSession(session, "memberName", "admin");
+		SessionManageUtils.addSession(session, SessionManageUtils.SESSION_USER, new AuthDto.SessionDto("admin", 1));
 
 		// When
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/logout")

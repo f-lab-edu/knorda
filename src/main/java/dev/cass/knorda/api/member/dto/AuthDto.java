@@ -1,5 +1,6 @@
-package dev.cass.knorda.api.user.dto;
+package dev.cass.knorda.api.member.dto;
 
+import dev.cass.knorda.domain.member.Member;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,5 +23,16 @@ public class AuthDto {
 		private String memberName;
 		@NotBlank
 		private String password;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class SessionDto {
+		private String memberName;
+		private int memberId;
+
+		public static SessionDto of(Member member) {
+			return new SessionDto(member.getMemberName(), member.getMemberId());
+		}
 	}
 }

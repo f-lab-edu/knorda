@@ -1,5 +1,8 @@
-package dev.cass.knorda.api.user.controller;
+package dev.cass.knorda.api.member.controller;
 
+import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -8,10 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.cass.knorda.api.user.dto.RegisterDto;
-import dev.cass.knorda.api.user.service.MemberService;
+import dev.cass.knorda.api.member.dto.RegisterDto;
+import dev.cass.knorda.api.member.service.MemberService;
 import dev.cass.knorda.global.controller.V1Controller;
 import dev.cass.knorda.global.util.SessionManageUtils;
 import jakarta.servlet.http.HttpSession;
@@ -45,46 +49,46 @@ public class MemberController {
 	@PostMapping("/members")
 	public ResponseEntity<RegisterDto.RegisterResponse> saveMember(
 		@RequestBody @Valid RegisterDto.RegisterRequest request) {
-		return ResponseEntity
-			.status(HttpStatus.CREATED)
-			.body(memberService.saveMember(request));
+		return ResponseEntity.status(HttpStatus.CREATED).body(memberService.saveMember(request));
 	}
 
-	@GetMapping("/members")
+	@GetMapping("/members/me")
 	public ResponseEntity<RegisterDto.GetMemberResponse> getLoggedInMember(HttpSession session) {
 		int memberId = SessionManageUtils.getMemberId(session);
-		return ResponseEntity
-			.status(HttpStatus.OK)
-			.body(memberService.findMemberByMemberId(memberId));
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.findMemberByMemberId(memberId));
 	}
 
 	@GetMapping("/members/{memberId}")
 	public ResponseEntity<RegisterDto.GetMemberResponse> getMember(@PathVariable int memberId) {
-		return ResponseEntity
-			.status(HttpStatus.OK)
-			.body(memberService.findMemberByMemberId(memberId));
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.findMemberByMemberId(memberId));
+	}
+
+	/**
+	 * requestParam - URL에 쿼리스트링으로 전달된 파라미터를 메소드의 파라미터로 전달받을 수 있게 해주는 어노테이션
+	 * PageableDefault - Pageable의 기본값을 설정할 수 있는 어노테이션
+	 * page - 현재 페이지
+	 * size - 한 페이지에 보여줄 데이터 수
+	 * sort - 정렬 기준 (컬럼명,정렬순) (ex. sort = "memberId,desc")
+	 */
+	@GetMapping("/members")
+	public ResponseEntity<List<RegisterDto.GetMemberResponse>> getMembers(@RequestParam("page") int page,
+		@RequestParam("size") int size) {
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.findAll(PageRequest.of(page, size)));
 	}
 
 	@PutMapping("/members")
-	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(
-		HttpSession session,
+	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(HttpSession session,
 		@RequestBody @Valid RegisterDto.UpdateMemberRequest request) {
 		String memberName = SessionManageUtils.getMemberName(session);
 		int memberId = SessionManageUtils.getMemberId(session);
-		return ResponseEntity
-			.status(HttpStatus.OK)
-			.body(memberService.updateMember(memberId, request, memberName));
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.updateMember(memberId, request, memberName));
 	}
 
 	@PutMapping("/members/{memberId}")
-	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(
-		HttpSession session,
-		@PathVariable int memberId,
-		@RequestBody @Valid RegisterDto.UpdateMemberRequest request) {
+	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(HttpSession session,
+		@PathVariable int memberId, @RequestBody @Valid RegisterDto.UpdateMemberRequest request) {
 		String loggedInMember = SessionManageUtils.getMemberName(session);
-		return ResponseEntity
-			.status(HttpStatus.OK)
-			.body(memberService.updateMember(memberId, request, loggedInMember));
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.updateMember(memberId, request, loggedInMember));
 	}
 
 	@DeleteMapping("/members")
@@ -92,20 +96,14 @@ public class MemberController {
 		String memberName = SessionManageUtils.getMemberName(session);
 		int memberId = SessionManageUtils.getMemberId(session);
 		memberService.deleteMember(memberId, memberName);
-		return ResponseEntity
-			.status(HttpStatus.NO_CONTENT)
-			.build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@DeleteMapping("/members/{memberId}")
-	public ResponseEntity<Void> deleteMember(
-		HttpSession session,
-		@PathVariable int memberId) {
+	public ResponseEntity<Void> deleteMember(HttpSession session, @PathVariable int memberId) {
 		String loggedInUser = SessionManageUtils.getMemberName(session);
 		memberService.deleteMember(memberId, loggedInUser);
-		return ResponseEntity
-			.status(HttpStatus.NO_CONTENT)
-			.build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	/**
@@ -113,9 +111,15 @@ public class MemberController {
 	 */
 	@GetMapping("/members/duplicate-id/{memberName}")
 	public ResponseEntity<RegisterDto.IsExistResponse> isExistMember(@PathVariable String memberName) {
-		return ResponseEntity
-			.status(HttpStatus.OK)
+		return ResponseEntity.status(HttpStatus.OK)
 			.body(new RegisterDto.IsExistResponse(memberService.isExistMemberName(memberName)));
 	}
 
+	@PutMapping("/members/password")
+	public ResponseEntity<Void> changePassword(HttpSession session,
+		@RequestBody @Valid RegisterDto.PasswordChangeRequest request) {
+		return ResponseEntity.status(
+			memberService.changePassword(SessionManageUtils.getMemberId(session), request) ? HttpStatus.NO_CONTENT :
+				HttpStatus.BAD_REQUEST).build();
+	}
 }

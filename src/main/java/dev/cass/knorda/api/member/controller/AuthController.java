@@ -1,12 +1,12 @@
-package dev.cass.knorda.api.user.controller;
+package dev.cass.knorda.api.member.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.cass.knorda.api.user.dto.AuthDto;
-import dev.cass.knorda.api.user.service.AuthService;
+import dev.cass.knorda.api.member.dto.AuthDto;
+import dev.cass.knorda.api.member.service.AuthService;
 import dev.cass.knorda.global.controller.V1Controller;
 import dev.cass.knorda.global.util.SessionManageUtils;
 import jakarta.servlet.http.HttpSession;

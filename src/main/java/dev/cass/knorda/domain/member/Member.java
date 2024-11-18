@@ -121,4 +121,8 @@ public class Member {
 		this.modifiedBy = modifiedBy;
 		this.delete();
 	}
+
+	public void login() {
+		this.lastLoggedAt = LocalDateTime.now();
+	}
 }

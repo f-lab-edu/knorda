@@ -1,11 +1,11 @@
-package dev.cass.knorda.api.user.service;
+package dev.cass.knorda.api.member.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import dev.cass.knorda.api.user.dto.AuthDto;
-import dev.cass.knorda.api.user.exception.IdPasswordNotMatchException;
-import dev.cass.knorda.api.user.exception.MemberNotFoundException;
+import dev.cass.knorda.api.member.dto.AuthDto;
+import dev.cass.knorda.api.member.exception.IdPasswordNotMatchException;
+import dev.cass.knorda.api.member.exception.MemberNotFoundException;
 import dev.cass.knorda.domain.member.Member;
 import dev.cass.knorda.domain.member.MemberRepository;
 import dev.cass.knorda.global.util.SessionManageUtils;
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 	private final MemberRepository memberRepository;
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public AuthDto.LoginResponse login(AuthDto.LoginRequest request, HttpSession session) {
 		Member member = memberRepository.findFirstByMemberName(request.getMemberName())
 			.orElseThrow(MemberNotFoundException::new);
@@ -26,8 +26,11 @@ public class AuthService {
 			throw new IdPasswordNotMatchException();
 		}
 
-		SessionManageUtils.addSession(session, "memberName", member.getMemberName());
-		SessionManageUtils.addSession(session, "memberId", member.getMemberId());
+		member.login();
+
+		memberRepository.save(member);
+
+		SessionManageUtils.addSession(session, SessionManageUtils.SESSION_USER, AuthDto.SessionDto.of(member));
 
 		return new AuthDto.LoginResponse(member.getMemberName());
 	}

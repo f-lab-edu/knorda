@@ -1,12 +1,13 @@
-package dev.cass.knorda.api.user.service;
+package dev.cass.knorda.api.member.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import dev.cass.knorda.api.user.exception.MemberNotFoundException;
-import dev.cass.knorda.api.user.dto.RegisterDto;
+import dev.cass.knorda.api.member.exception.MemberNotFoundException;
+import dev.cass.knorda.api.member.dto.RegisterDto;
 import dev.cass.knorda.domain.member.Member;
 import dev.cass.knorda.domain.member.MemberRepository;
 
@@ -38,12 +39,15 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public boolean isExistMember(String memberName) {
-		return memberRepository.findFirstByMemberNameAndIsDeleted(memberName, false).isPresent();
+		return memberRepository.findFirstByMemberNameAndIsDeletedFalse(memberName).isPresent();
 	}
 
 	@Transactional(readOnly = true)
-	public List<Member> findAll() {
-		return memberRepository.findAll();
+	public List<RegisterDto.GetMemberResponse> findAll(Pageable pageable) {
+		return memberRepository.findAllByIsDeletedFalse(pageable)
+			.stream()
+			.map(RegisterDto.GetMemberResponse::of)
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -53,8 +57,9 @@ public class MemberService {
 		return RegisterDto.GetMemberResponse.of(member);
 	}
 
-	public boolean changePassword(RegisterDto.PasswordChangeRequest request) {
-		return memberRepository.findFirstByMemberName(request.getMemberName())
+	@Transactional
+	public boolean changePassword(int memberId, RegisterDto.PasswordChangeRequest request) {
+		return memberRepository.findFirstByMemberId(memberId)
 			.map(member -> {
 				if (member.isPasswordMatch(request.getPassword())) {
 					member.setPassword(request.getNewPassword());
@@ -74,14 +79,6 @@ public class MemberService {
 		member.update(request.getDescription(), modifier);
 		Member updatedMember = memberRepository.save(member);
 		return RegisterDto.UpdateMemberResponse.of(updatedMember);
-	}
-
-	@Transactional
-	public void deleteMember(String memberName, String modifier) {
-		Member member = memberRepository.findFirstByMemberName(memberName)
-			.orElseThrow(MemberNotFoundException::new);
-		member.delete(modifier);
-		memberRepository.save(member);
 	}
 
 	@Transactional

@@ -1,4 +1,4 @@
-package dev.cass.knorda.api.user.dto;
+package dev.cass.knorda.api.member.dto;
 
 import java.time.LocalDateTime;
 
@@ -39,10 +39,16 @@ public class RegisterDto {
 		private String description;
 
 		public Member toEntity() {
+			LocalDateTime now = LocalDateTime.now();
 			return Member.builder()
 				.memberName(memberName)
 				.password(password)
+				.lastLoggedAt(now)
+				.isDeleted(false)
 				.description(description)
+				.createdAt(now)
+				.modifiedBy(memberName)
+				.modifiedAt(now)
 				.build();
 		}
 	}
@@ -50,10 +56,6 @@ public class RegisterDto {
 	@Getter
 	@AllArgsConstructor
 	public static class PasswordChangeRequest {
-		@NotNull
-		@Size(min = 4, max = 20)
-		private String memberName;
-
 		@NotNull
 		@Size(min = 5)
 		private String password;
@@ -72,16 +74,19 @@ public class RegisterDto {
 	@Getter
 	@AllArgsConstructor
 	public static class RegisterResponse {
+		private int memberId;
 		private String memberName;
+		private String description;
 
 		public static RegisterResponse of(Member member) {
-			return new RegisterResponse(member.getMemberName());
+			return new RegisterResponse(member.getMemberId(), member.getMemberName(), member.getDescription());
 		}
 	}
 
 	@Getter
 	@AllArgsConstructor
 	public static class GetMemberResponse {
+		private int memberId;
 		private String memberName;
 		private String description;
 		/**
@@ -96,7 +101,8 @@ public class RegisterDto {
 		private LocalDateTime modifiedAt;
 
 		public static GetMemberResponse of(Member member) {
-			return new GetMemberResponse(member.getMemberName(), member.getDescription(), member.getLastLoggedAt(),
+			return new GetMemberResponse(member.getMemberId(), member.getMemberName(), member.getDescription(),
+				member.getLastLoggedAt(),
 				member.getCreatedAt(), member.getModifiedAt());
 		}
 	}
