@@ -11,10 +11,10 @@ import org.springframework.test.context.ActiveProfiles;
  * TestPropertySource 어노테이션으로 로드한 properties는, JAVA 시스템에서, 애플리케이션 단위에서 (@PropertySource), 혹은 programmatically하게 선언한 속성 (ApplicationContextInitializer)보다 우선순위가 높음
  * 단, @DynamicPropertySource 어노테이션으로 로드한 properties는, TestPropertySource 어노테이션으로 로드한 properties보다 우선순위가 높음
  * 즉, test/resources/application-test.yaml 파일을 로드하고, 해당 파일에 선언된 properties를 사용할 것임을 명시
- *
+ * <p>
  * - ActiveProfiles
  * 활성화할 프로파일을 지정하는 어노테이션
- *
+ * <p>
  * - SpringBootTest
  * spring-boot-test 라이브러리에서 제공하는 어노테이션
  * 스프링의 전체 컨텍스트를 로드하여 테스트를 진행하게 해 줌

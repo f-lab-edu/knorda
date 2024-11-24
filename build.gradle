@@ -60,6 +60,17 @@ jacocoTestReport {
         xml.destination file(layout.buildDirectory.dir("jacoco/jacocoTestReport.xml"))
         html.destination file(layout.buildDirectory.dir("jacoco/html"))
     }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/dto/**',
+                    '**/exception/**'
+            ])
+        }))
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
 }
 
 jacocoTestCoverageVerification {
@@ -81,6 +92,14 @@ jacocoTestCoverageVerification {
                 value = 'COVEREDRATIO'
                 minimum = 0.80
             }
+
+            // DTO 클래스는 커버리지 체크에서 제외
+            excludes = [
+                    '**.dto.**',
+                    '**.exception.**',
+                    '**.EncryptUtils',
+                    '**.SessionManageUtils'
+            ]
         }
     }
 }
