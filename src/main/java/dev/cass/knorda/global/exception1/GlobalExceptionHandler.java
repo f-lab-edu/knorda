@@ -1,5 +1,6 @@
 package dev.cass.knorda.global.exception1;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,15 +33,15 @@ public class GlobalExceptionHandler {
 
 		StringBuilder message = new StringBuilder();
 
-		// 모든 필드의 validation 메시지를 리턴하기 위해서, FieldError를 순회하며 메시지를 append
+		// 모든 필드의 validation 메시지를 리턴하기 위해서, FieldErrors 를 순회하며 메시지를 append
 		for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
 			message.append(fieldError.getField()).append(" : ").append(fieldError.getDefaultMessage()).append(" ");
 		}
 
-		return response(400, message.toString());
+		return response(HttpStatus.BAD_REQUEST, message.toString());
 	}
 
-	private ResponseEntity<ErrorResponse> response(int status, String message) {
+	private ResponseEntity<ErrorResponse> response(HttpStatus status, String message) {
 		return ResponseEntity.status(status).body(new ErrorResponse(status, message));
 	}
 }

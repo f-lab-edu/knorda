@@ -75,8 +75,8 @@ public class Member {
 	@Column(name = "password")
 	private String password;
 
-	@Column(name = "last_logged_at")
-	private LocalDateTime lastLoggedAt;
+	@Column(name = "last_logged_in_at")
+	private LocalDateTime lastLoggedInAt;
 
 	@Column(name = "is_deleted")
 	private Boolean isDeleted;
@@ -123,6 +123,6 @@ public class Member {
 	}
 
 	public void login() {
-		this.lastLoggedAt = LocalDateTime.now();
+		this.lastLoggedInAt = LocalDateTime.now();
 	}
 }

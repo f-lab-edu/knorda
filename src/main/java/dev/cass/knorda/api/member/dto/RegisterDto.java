@@ -43,7 +43,7 @@ public class RegisterDto {
 			return Member.builder()
 				.memberName(memberName)
 				.password(password)
-				.lastLoggedAt(now)
+				.lastLoggedInAt(now)
 				.isDeleted(false)
 				.description(description)
 				.createdAt(now)
@@ -94,7 +94,7 @@ public class RegisterDto {
 		 * String 형식으로, pattern의 "yyyy-MM-dd'T'HH:mm:ss" 형식으로 직렬화하고, timezone을 "Asia/Seoul"로 설정
 		 */
 		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
-		private LocalDateTime lastLoggedAt;
+		private LocalDateTime lastLoggedInAt;
 		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
 		private LocalDateTime createdAt;
 		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
@@ -102,7 +102,7 @@ public class RegisterDto {
 
 		public static GetMemberResponse of(Member member) {
 			return new GetMemberResponse(member.getMemberId(), member.getMemberName(), member.getDescription(),
-				member.getLastLoggedAt(),
+				member.getLastLoggedInAt(),
 				member.getCreatedAt(), member.getModifiedAt());
 		}
 	}
