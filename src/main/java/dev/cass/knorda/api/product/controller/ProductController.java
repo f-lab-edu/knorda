@@ -43,13 +43,14 @@ public class ProductController {
 	}
 
 	@PutMapping("/products/{productId}")
-	public ResponseEntity<ProductRegisterDto.response> updateProduct(
+	public ResponseEntity<ProductRegisterDto.RegisterResponse> updateProduct(
 		@PathVariable int productId,
-		@RequestBody @Valid ProductRegisterDto.request request,
+		@RequestBody @Valid ProductRegisterDto.RegisterRequest registerRequest,
 		HttpSession session
 	) {
 		String loggedInUser = SessionManageUtils.getMemberName(session);
-		return ResponseEntity.status(HttpStatus.OK).body(productFacade.updateProduct(productId, request, loggedInUser));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(productFacade.updateProduct(productId, registerRequest, loggedInUser));
 	}
 
 	@GetMapping("/products")
@@ -71,9 +72,10 @@ public class ProductController {
 	}
 
 	@PostMapping("/products")
-	public ResponseEntity<ProductRegisterDto.response> registerProduct(
-		@RequestBody @Valid ProductRegisterDto.request request, HttpSession session) {
+	public ResponseEntity<ProductRegisterDto.RegisterResponse> registerProduct(
+		@RequestBody @Valid ProductRegisterDto.RegisterRequest registerRequest, HttpSession session) {
 		String loggedInUser = SessionManageUtils.getMemberName(session);
-		return ResponseEntity.status(HttpStatus.CREATED).body(productFacade.registerProduct(request, loggedInUser));
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(productFacade.registerProduct(registerRequest, loggedInUser));
 	}
 }

@@ -67,7 +67,7 @@ class ProductFacadeTest {
 	void registerProductDuplicateName() {
 		// given
 		String memberName = "admin";
-		ProductRegisterDto.request registerRequest = new ProductRegisterDto.request("Product 1",
+		ProductRegisterDto.RegisterRequest registerRequest = new ProductRegisterDto.RegisterRequest("Product 1",
 			"Product 1 description");
 
 		doReturn(true).when(productService).isExistProductName(registerRequest.getProductName());
@@ -87,7 +87,7 @@ class ProductFacadeTest {
 			.memberName(memberName)
 			.password("admin")
 			.build();
-		ProductRegisterDto.request registerRequest = new ProductRegisterDto.request("Product 1",
+		ProductRegisterDto.RegisterRequest registerRequest = new ProductRegisterDto.RegisterRequest("Product 1",
 			"Product 1 description");
 		Product product = Product.builder()
 			.productId(1)
@@ -100,11 +100,12 @@ class ProductFacadeTest {
 		doReturn(product).when(productService).save(registerRequest, member);
 
 		// when
-		ProductRegisterDto.response productResponse = productFacade.registerProduct(registerRequest, memberName);
+		ProductRegisterDto.RegisterResponse productRegisterResponse = productFacade.registerProduct(registerRequest,
+			memberName);
 
 		// then
-		assertEquals(productResponse.getProductName(), product.getName());
-		assertEquals(productResponse.getDescription(), product.getDescription());
+		assertEquals(productRegisterResponse.getProductName(), product.getName());
+		assertEquals(productRegisterResponse.getDescription(), product.getDescription());
 	}
 
 	@DisplayName("상품 조회 - 쿼리")
@@ -200,7 +201,8 @@ class ProductFacadeTest {
 			.memberName(memberName)
 			.password("admin")
 			.build();
-		ProductRegisterDto.request updateRequest = new ProductRegisterDto.request("Product 1 new",
+		ProductRegisterDto.RegisterRequest updateRegisterRequest = new ProductRegisterDto.RegisterRequest(
+			"Product 1 new",
 			"Product 1 description new");
 		Product product = Product.builder()
 			.productId(productId)
@@ -211,16 +213,17 @@ class ProductFacadeTest {
 
 		doReturn(product).when(productService).findById(productId);
 
-		product.update(updateRequest.getProductName(), updateRequest.getDescription());
+		product.update(updateRegisterRequest.getProductName(), updateRegisterRequest.getDescription());
 
-		doReturn(product).when(productService).update(product, updateRequest);
+		doReturn(product).when(productService).update(product, updateRegisterRequest);
 
 		// when
-		ProductRegisterDto.response productResponse = productFacade.updateProduct(productId, updateRequest, memberName);
+		ProductRegisterDto.RegisterResponse productRegisterResponse = productFacade.updateProduct(productId,
+			updateRegisterRequest, memberName);
 
 		// then
-		assertEquals(productResponse.getProductName(), product.getName());
-		assertEquals(productResponse.getDescription(), product.getDescription());
+		assertEquals(productRegisterResponse.getProductName(), product.getName());
+		assertEquals(productRegisterResponse.getDescription(), product.getDescription());
 	}
 
 	@DisplayName("상품 수정 - 다른 사용자")
@@ -233,7 +236,8 @@ class ProductFacadeTest {
 			.memberName("admin")
 			.password("admin")
 			.build();
-		ProductRegisterDto.request updateRequest = new ProductRegisterDto.request("Product 1 new",
+		ProductRegisterDto.RegisterRequest updateRegisterRequest = new ProductRegisterDto.RegisterRequest(
+			"Product 1 new",
 			"Product 1 description new");
 		Product product = Product.builder()
 			.productId(productId)
@@ -246,10 +250,10 @@ class ProductFacadeTest {
 
 		// when
 		assertThrows(NotYourProductException.class,
-			() -> productFacade.updateProduct(productId, updateRequest, "user"));
+			() -> productFacade.updateProduct(productId, updateRegisterRequest, "user"));
 
 		// then
-		verify(productService, never()).update(product, updateRequest);
+		verify(productService, never()).update(product, updateRegisterRequest);
 	}
 
 	@DisplayName("상품 수정 - 이름 중복")
@@ -263,7 +267,8 @@ class ProductFacadeTest {
 			.memberName(memberName)
 			.password("admin")
 			.build();
-		ProductRegisterDto.request updateRequest = new ProductRegisterDto.request("Product 1 new",
+		ProductRegisterDto.RegisterRequest updateRegisterRequest = new ProductRegisterDto.RegisterRequest(
+			"Product 1 new",
 			"Product 1 description new");
 		Product product = Product.builder()
 			.productId(productId)
@@ -273,14 +278,14 @@ class ProductFacadeTest {
 			.build();
 
 		doReturn(product).when(productService).findById(productId);
-		doReturn(true).when(productService).isExistProductName(updateRequest.getProductName());
+		doReturn(true).when(productService).isExistProductName(updateRegisterRequest.getProductName());
 
 		// when
 		assertThrows(AlreadyExistProductNameException.class,
-			() -> productFacade.updateProduct(productId, updateRequest, memberName));
+			() -> productFacade.updateProduct(productId, updateRegisterRequest, memberName));
 
 		// then
-		verify(productService, never()).update(product, updateRequest);
+		verify(productService, never()).update(product, updateRegisterRequest);
 	}
 
 	@DisplayName("상품 수정 - 현재 상품명과 동일")
@@ -294,7 +299,7 @@ class ProductFacadeTest {
 			.memberName(memberName)
 			.password("admin")
 			.build();
-		ProductRegisterDto.request updateRequest = new ProductRegisterDto.request("Product 1",
+		ProductRegisterDto.RegisterRequest updateRegisterRequest = new ProductRegisterDto.RegisterRequest("Product 1",
 			"Product 1 description");
 		Product product = Product.builder()
 			.productId(productId)
@@ -305,15 +310,16 @@ class ProductFacadeTest {
 
 		doReturn(product).when(productService).findById(productId);
 
-		product.update(updateRequest.getProductName(), updateRequest.getDescription());
+		product.update(updateRegisterRequest.getProductName(), updateRegisterRequest.getDescription());
 
-		doReturn(product).when(productService).update(product, updateRequest);
+		doReturn(product).when(productService).update(product, updateRegisterRequest);
 
 		// when
-		ProductRegisterDto.response productResponse = productFacade.updateProduct(productId, updateRequest, memberName);
+		ProductRegisterDto.RegisterResponse productRegisterResponse = productFacade.updateProduct(productId,
+			updateRegisterRequest, memberName);
 
 		// then
-		assertEquals(productResponse.getProductName(), product.getName());
-		assertEquals(productResponse.getDescription(), product.getDescription());
+		assertEquals(productRegisterResponse.getProductName(), product.getName());
+		assertEquals(productRegisterResponse.getDescription(), product.getDescription());
 	}
 }

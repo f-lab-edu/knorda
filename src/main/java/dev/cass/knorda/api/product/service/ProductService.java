@@ -27,8 +27,8 @@ public class ProductService {
 		return productRepository.findFirstByProductId(productId).orElseThrow(ProductNotExistException::new);
 	}
 
-	public Product save(ProductRegisterDto.request request, Member member) {
-		Product product = request.toEntity();
+	public Product save(ProductRegisterDto.RegisterRequest registerRequest, Member member) {
+		Product product = registerRequest.toEntity();
 		product.setMember(member);
 		return productRepository.save(product);
 	}
@@ -38,8 +38,8 @@ public class ProductService {
 		productRepository.save(product);
 	}
 
-	public Product update(Product product, ProductRegisterDto.request request) {
-		product.update(request.getProductName(), request.getDescription());
+	public Product update(Product product, ProductRegisterDto.RegisterRequest registerRequest) {
+		product.update(registerRequest.getProductName(), registerRequest.getDescription());
 		return productRepository.save(product);
 	}
 

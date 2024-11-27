@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class ProductRegisterDto {
 	@Getter
 	@AllArgsConstructor
-	public static class request {
+	public static class RegisterRequest {
 		@NotNull
 		private String productName;
 		@NotNull
@@ -31,15 +31,15 @@ public class ProductRegisterDto {
 
 	@Getter
 	@AllArgsConstructor
-	public static class response {
+	public static class RegisterResponse {
 		private int productId;
 		private String productName;
 		private String description;
 		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
 		private LocalDateTime registerDate;
 
-		public static response of(Product product) {
-			return new response(
+		public static RegisterResponse of(Product product) {
+			return new RegisterResponse(
 				product.getProductId(),
 				product.getName(),
 				product.getDescription(),

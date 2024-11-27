@@ -24,12 +24,13 @@ public class ProductFacade {
 		return ProductFindDto.GetProductResponse.of(productService.findById(productId));
 	}
 
-	public ProductRegisterDto.response registerProduct(ProductRegisterDto.request request, String memberName) {
+	public ProductRegisterDto.RegisterResponse registerProduct(ProductRegisterDto.RegisterRequest registerRequest,
+		String memberName) {
 		Member member = memberService.findMemberByMemberName(memberName);
-		if (productService.isExistProductName(request.getProductName())) {
+		if (productService.isExistProductName(registerRequest.getProductName())) {
 			throw new AlreadyExistProductNameException();
 		}
-		return ProductRegisterDto.response.of(productService.save(request, member));
+		return ProductRegisterDto.RegisterResponse.of(productService.save(registerRequest, member));
 	}
 
 	public List<ProductFindDto.GetProductResponse> getProductListByQuery(ProductFindDto.GetProductQuery productQuery) {
@@ -46,16 +47,17 @@ public class ProductFacade {
 		productService.delete(product);
 	}
 
-	public ProductRegisterDto.response updateProduct(int productId, ProductRegisterDto.request request,
+	public ProductRegisterDto.RegisterResponse updateProduct(int productId,
+		ProductRegisterDto.RegisterRequest registerRequest,
 		String loggedInUser) {
 		Product product = productService.findById(productId);
 		if (!product.getMember().getMemberName().equals(loggedInUser)) {
 			throw new NotYourProductException();
 		}
-		if (!product.getName().equals(request.getProductName()) && productService.isExistProductName(
-			request.getProductName())) {
+		if (!product.getName().equals(registerRequest.getProductName()) && productService.isExistProductName(
+			registerRequest.getProductName())) {
 			throw new AlreadyExistProductNameException();
 		}
-		return ProductRegisterDto.response.of(productService.update(product, request));
+		return ProductRegisterDto.RegisterResponse.of(productService.update(product, registerRequest));
 	}
 }

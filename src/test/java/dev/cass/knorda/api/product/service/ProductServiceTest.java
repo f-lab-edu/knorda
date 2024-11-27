@@ -61,7 +61,8 @@ class ProductServiceTest {
 	@Test
 	void save() {
 		// given
-		ProductRegisterDto.request productQuery = new ProductRegisterDto.request("Product 1", "Product 1 description");
+		ProductRegisterDto.RegisterRequest productQuery = new ProductRegisterDto.RegisterRequest("Product 1",
+			"Product 1 description");
 		Product product = Product.builder()
 			.productId(1)
 			.name("Product 1")
@@ -88,7 +89,7 @@ class ProductServiceTest {
 	@Test
 	void update() {
 		// given
-		ProductRegisterDto.request productQuery = new ProductRegisterDto.request("Product 1 new",
+		ProductRegisterDto.RegisterRequest productQuery = new ProductRegisterDto.RegisterRequest("Product 1 new",
 			"Product 1 description new");
 		Product product = Product.builder()
 			.productId(1)

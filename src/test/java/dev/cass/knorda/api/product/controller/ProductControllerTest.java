@@ -101,25 +101,27 @@ class ProductControllerTest {
 		int productId = 1;
 		String name = "admin";
 		int userId = 1;
-		ProductRegisterDto.request updateProductRequest = new ProductRegisterDto.request("Product 1 new",
+		ProductRegisterDto.RegisterRequest updateProductRegisterRequest = new ProductRegisterDto.RegisterRequest(
+			"Product 1 new",
 			"Product 1 description new");
-		ProductRegisterDto.response getProductResponse = new ProductRegisterDto.response(productId,
+		ProductRegisterDto.RegisterResponse getProductRegisterResponse = new ProductRegisterDto.RegisterResponse(
+			productId,
 			"Product 1 new", "Product 1 description new",
 			LocalDateTime.of(2020, 10, 10, 0, 0, 0));
 
-		doReturn(getProductResponse).when(productFacade)
-			.updateProduct(eq(productId), any(ProductRegisterDto.request.class), eq(name));
+		doReturn(getProductRegisterResponse).when(productFacade)
+			.updateProduct(eq(productId), any(ProductRegisterDto.RegisterRequest.class), eq(name));
 
 		// when
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/products/{productId}", productId)
 			.contentType("application/json")
-			.content(objectMapper.writeValueAsString(updateProductRequest))
+			.content(objectMapper.writeValueAsString(updateProductRegisterRequest))
 			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, userId)));
 
 		// then
 		resultActions
 			.andExpect(status().isOk())
-			.andExpect(content().json(objectMapper.writeValueAsString(getProductResponse)));
+			.andExpect(content().json(objectMapper.writeValueAsString(getProductRegisterResponse)));
 	}
 
 	@DisplayName("상품번호로 수정 - 이름이 없음")
@@ -129,13 +131,13 @@ class ProductControllerTest {
 		int productId = 1;
 		String name = "admin";
 		int userId = 1;
-		ProductRegisterDto.request updateProductRequest = new ProductRegisterDto.request(null,
+		ProductRegisterDto.RegisterRequest updateProductRegisterRequest = new ProductRegisterDto.RegisterRequest(null,
 			"Product 1 description new");
 
 		// when
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/products/{productId}", productId)
 			.contentType("application/json")
-			.content(objectMapper.writeValueAsString(updateProductRequest))
+			.content(objectMapper.writeValueAsString(updateProductRegisterRequest))
 			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, userId)));
 
 		// then
@@ -226,26 +228,27 @@ class ProductControllerTest {
 		// given
 		String name = "admin";
 		int userId = 1;
-		ProductRegisterDto.request registerProductRequest = new ProductRegisterDto.request("Product 1",
+		ProductRegisterDto.RegisterRequest registerProductRegisterRequest = new ProductRegisterDto.RegisterRequest(
+			"Product 1",
 			"Product 1 description");
 
-		ProductRegisterDto.response getProductResponse = new ProductRegisterDto.response(1,
+		ProductRegisterDto.RegisterResponse getProductRegisterResponse = new ProductRegisterDto.RegisterResponse(1,
 			"Product 1", "Product 1 description",
 			LocalDateTime.of(2020, 10, 10, 0, 0, 0));
 
-		doReturn(getProductResponse).when(productFacade)
-			.registerProduct(any(ProductRegisterDto.request.class), eq(name));
+		doReturn(getProductRegisterResponse).when(productFacade)
+			.registerProduct(any(ProductRegisterDto.RegisterRequest.class), eq(name));
 
 		// when
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/products")
 			.contentType("application/json")
-			.content(objectMapper.writeValueAsString(registerProductRequest))
+			.content(objectMapper.writeValueAsString(registerProductRegisterRequest))
 			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, userId)));
 
 		// then
 		resultActions
 			.andExpect(status().isCreated())
-			.andExpect(content().json(objectMapper.writeValueAsString(getProductResponse)));
+			.andExpect(content().json(objectMapper.writeValueAsString(getProductRegisterResponse)));
 	}
 
 	@DisplayName("상품 등록 Validation 실패")
@@ -254,13 +257,14 @@ class ProductControllerTest {
 		// given
 		String name = "admin";
 		int userId = 1;
-		ProductRegisterDto.request registerProductRequest = new ProductRegisterDto.request("Product 1",
+		ProductRegisterDto.RegisterRequest registerProductRegisterRequest = new ProductRegisterDto.RegisterRequest(
+			"Product 1",
 			null);
 
 		// when
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/products")
 			.contentType("application/json")
-			.content(objectMapper.writeValueAsString(registerProductRequest))
+			.content(objectMapper.writeValueAsString(registerProductRegisterRequest))
 			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, userId)));
 
 		// then
