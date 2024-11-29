@@ -76,7 +76,7 @@ class ProductServiceTest {
 
 		product.setMember(member);
 
-		doReturn(product).when(productRepository).save(any(Product.class));
+		doReturn(product).when(productRepository).saveAndFlush(any(Product.class));
 
 		// when
 		Product product1 = productService.save(productQuery, member);
@@ -99,7 +99,7 @@ class ProductServiceTest {
 
 		product.update(productQuery.getProductName(), productQuery.getDescription());
 
-		doReturn(product).when(productRepository).save(product);
+		doReturn(product).when(productRepository).saveAndFlush(product);
 
 		// when
 		Product product1 = productService.update(product, productQuery);
@@ -136,13 +136,8 @@ class ProductServiceTest {
 	void isExistProductName() {
 		// given
 		String productName = "Product 1";
-		Product product = Product.builder()
-			.productId(1)
-			.name("Product 1")
-			.description("Product 1 description")
-			.build();
 
-		doReturn(Optional.of(product)).when(productRepository).findFirstByNameAndIsDeletedFalse(productName);
+		doReturn(true).when(productRepository).existsByName(productName);
 
 		// when
 		boolean isExist = productService.isExistProductName(productName);

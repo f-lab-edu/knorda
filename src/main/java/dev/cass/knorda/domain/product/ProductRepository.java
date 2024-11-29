@@ -18,6 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 	@EntityGraph(attributePaths = "member")
 	ArrayList<Product> findAllByMemberMemberId(int memberId);
 
-	Optional<Product> findFirstByNameAndIsDeletedFalse(String name);
+	boolean existsByName(String name);
 
 }

@@ -103,16 +103,16 @@ class ProductRepositoryTest {
 		assertFalse(product.isEmpty());
 	}
 
-	@DisplayName("상품 이름으로 상품 조회")
+	@DisplayName("상품 이름으로 상품 존재 여부 확인")
 	@Test
 	void findByName() {
 		// given
 		String name = "Product 1";
 
 		// when
-		Product product = productRepository.findFirstByNameAndIsDeletedFalse(name).orElse(null);
+		boolean product = productRepository.existsByName(name);
 
 		// then
-		assertNotNull(product);
+		assertTrue(product);
 	}
 }

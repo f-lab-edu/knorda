@@ -30,7 +30,7 @@ public class ProductService {
 	public Product save(ProductRegisterDto.RegisterRequest registerRequest, Member member) {
 		Product product = registerRequest.toEntity();
 		product.setMember(member);
-		return productRepository.save(product);
+		return productRepository.saveAndFlush(product);
 	}
 
 	public void delete(Product product) {
@@ -40,12 +40,12 @@ public class ProductService {
 
 	public Product update(Product product, ProductRegisterDto.RegisterRequest registerRequest) {
 		product.update(registerRequest.getProductName(), registerRequest.getDescription());
-		return productRepository.save(product);
+		return productRepository.saveAndFlush(product);
 	}
 
 	@Transactional(readOnly = true)
 	public boolean isExistProductName(String productName) {
-		return productRepository.findFirstByNameAndIsDeletedFalse(productName).isPresent();
+		return productRepository.existsByName(productName);
 	}
 
 	@Transactional(readOnly = true)

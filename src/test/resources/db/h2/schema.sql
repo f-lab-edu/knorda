@@ -22,7 +22,8 @@ CREATE TABLE "product"
     `description` mediumtext          NOT NULL,
     `is_deleted`  boolean             NOT NULL,
     `created_at`  datetime            NOT NULL,
-    `modified_at` datetime            NOT NULL
+    `modified_at` datetime            NOT NULL,
+    CONSTRAINT `product_name` UNIQUE (`name`)
 );
 
 ALTER TABLE "product"
