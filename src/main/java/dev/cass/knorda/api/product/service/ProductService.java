@@ -1,9 +1,7 @@
 package dev.cass.knorda.api.product.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +11,7 @@ import dev.cass.knorda.api.product.exception.ProductNotExistException;
 import dev.cass.knorda.domain.member.Member;
 import dev.cass.knorda.domain.product.Product;
 import dev.cass.knorda.domain.product.ProductRepository;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
+import dev.cass.knorda.domain.product.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -50,31 +47,7 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public List<Product> findAllByQuery(ProductFindDto.GetProductQuery productQuery) {
-		Specification<Product> specification = (root, query, criteriaBuilder) -> {
-			List<jakarta.persistence.criteria.Predicate> predicates = new ArrayList<>();
-
-			root.fetch("member", JoinType.LEFT);
-
-			if (productQuery.getProductName() != null) {
-				predicates.add(criteriaBuilder.equal(root.get("name"), productQuery.getProductName()));
-			}
-
-			if (productQuery.getMemberName() != null) {
-				predicates.add(
-					criteriaBuilder.equal(root.get("member").get("memberName"), productQuery.getMemberName()));
-			}
-
-			if (productQuery.getStartDateTime() != null) {
-				predicates.add(
-					criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), productQuery.getStartDateTime()));
-				predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), productQuery.getEndDateTime()));
-			}
-
-			predicates.add(criteriaBuilder.isFalse(root.get("isDeleted")));
-
-			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-		};
-		return productRepository.findAll(specification);
+		return productRepository.findAll(ProductSpecification.searchProductQuery(productQuery));
 	}
 
 }

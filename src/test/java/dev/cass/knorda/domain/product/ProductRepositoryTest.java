@@ -14,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import dev.cass.knorda.api.product.dto.ProductFindDto;
-import dev.cass.knorda.api.product.service.ProductService;
 
 @Transactional
 @ActiveProfiles("test")
@@ -24,16 +23,6 @@ class ProductRepositoryTest {
 	@Autowired
 	private ProductRepository productRepository;
 
-	@Autowired
-	private ProductService productService;
-
-	/**
-	 * 동적 쿼리 테스트를 해야 하는데, mocking하다 보면 data.sql에 있는 데이터를 가져오지 못한다.
-	 * 그러면 beforeEach에서 데이터를 넣어주는 방법이 있지만, 그렇게 되면 테스트 코드가 너무 길어진다.
-	 * 그래서 일단 repositoryTest 클래스에서 테스트를 진행시켰는데, productServiceTest 클래스를 두 개를 작성해야 할지?
-	 * 동적 쿼리 부분을 따로 Repository 클래스로 분리하려고 해도, specification은 JpaSpecificationExecutor 인터페이스의 메소드를 호출해야 되기 때문에 순환참조가 일어날 것 같음?
-	 * 우선 동적 쿼리에 대한 테스트는 임시로 repositoryTest에 작성하고, 어떻게 변경할지 정할 예정
-	 */
 	@DisplayName("동적 쿼리 - 회원으로 상품 조회")
 	@Test
 	void findAllByQueryMemberName() {
@@ -41,7 +30,7 @@ class ProductRepositoryTest {
 		ProductFindDto.GetProductQuery productQuery = new ProductFindDto.GetProductQuery(null, "admin", null, null);
 
 		// when
-		List<Product> products = productService.findAllByQuery(productQuery);
+		List<Product> products = productRepository.findAll(ProductSpecification.searchProductQuery(productQuery));
 
 		// then
 		assertEquals(2, products.size());
@@ -54,7 +43,7 @@ class ProductRepositoryTest {
 		ProductFindDto.GetProductQuery productQuery = new ProductFindDto.GetProductQuery("Product 3", null, null, null);
 
 		// when
-		List<Product> products = productService.findAllByQuery(productQuery);
+		List<Product> products = productRepository.findAll(ProductSpecification.searchProductQuery(productQuery));
 
 		// then
 		assertEquals(1, products.size());
@@ -69,7 +58,7 @@ class ProductRepositoryTest {
 			LocalDateTime.of(2021, 10, 10, 0, 0, 0));
 
 		// when
-		List<Product> products = productService.findAllByQuery(productQuery);
+		List<Product> products = productRepository.findAll(ProductSpecification.searchProductQuery(productQuery));
 
 		// then
 		assertEquals(2, products.size());
@@ -84,7 +73,7 @@ class ProductRepositoryTest {
 			LocalDateTime.of(2021, 10, 10, 0, 0, 0));
 
 		// when
-		List<Product> products = productService.findAllByQuery(productQuery);
+		List<Product> products = productRepository.findAll(ProductSpecification.searchProductQuery(productQuery));
 
 		// then
 		assertEquals(1, products.size());
