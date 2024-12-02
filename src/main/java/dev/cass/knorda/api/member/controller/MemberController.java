@@ -101,8 +101,8 @@ public class MemberController {
 
 	@DeleteMapping("/members/{memberId}")
 	public ResponseEntity<Void> deleteMember(HttpSession session, @PathVariable int memberId) {
-		String loggedInUser = SessionManageUtils.getMemberName(session);
-		memberService.deleteMember(memberId, loggedInUser);
+		String loggedInMember = SessionManageUtils.getMemberName(session);
+		memberService.deleteMember(memberId, loggedInMember);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 

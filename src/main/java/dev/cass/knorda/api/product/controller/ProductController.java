@@ -37,20 +37,17 @@ public class ProductController {
 
 	@DeleteMapping("/products/{productId}")
 	public ResponseEntity<Void> deleteProduct(@PathVariable int productId, HttpSession session) {
-		String loggedInUser = SessionManageUtils.getMemberName(session);
-		productFacade.deleteProduct(productId, loggedInUser);
+		String loggedInMember = SessionManageUtils.getMemberName(session);
+		productFacade.deleteProduct(productId, loggedInMember);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@PutMapping("/products/{productId}")
-	public ResponseEntity<ProductRegisterDto.RegisterResponse> updateProduct(
-		@PathVariable int productId,
-		@RequestBody @Valid ProductRegisterDto.RegisterRequest registerRequest,
-		HttpSession session
-	) {
-		String loggedInUser = SessionManageUtils.getMemberName(session);
+	public ResponseEntity<ProductRegisterDto.RegisterResponse> updateProduct(@PathVariable int productId,
+		@RequestBody @Valid ProductRegisterDto.RegisterRequest registerRequest, HttpSession session) {
+		String loggedInMember = SessionManageUtils.getMemberName(session);
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(productFacade.updateProduct(productId, registerRequest, loggedInUser));
+			.body(productFacade.updateProduct(productId, registerRequest, loggedInMember));
 	}
 
 	@GetMapping("/products")
@@ -58,9 +55,7 @@ public class ProductController {
 		@RequestParam(required = false, name = "productName") String productName,
 		@RequestParam(required = false, name = "memberName") String memberName,
 		@RequestParam(required = false, name = "startDateTime") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime startDateTime,
-		@RequestParam(required = false, name = "endDateTime") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime endDateTime
-	) {
-
+		@RequestParam(required = false, name = "endDateTime") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime endDateTime) {
 		ProductFindDto.GetProductQuery productQuery = ProductFindDto.GetProductQuery.builder()
 			.productName(productName)
 			.memberName(memberName)
@@ -74,8 +69,8 @@ public class ProductController {
 	@PostMapping("/products")
 	public ResponseEntity<ProductRegisterDto.RegisterResponse> registerProduct(
 		@RequestBody @Valid ProductRegisterDto.RegisterRequest registerRequest, HttpSession session) {
-		String loggedInUser = SessionManageUtils.getMemberName(session);
+		String loggedInMember = SessionManageUtils.getMemberName(session);
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(productFacade.registerProduct(registerRequest, loggedInUser));
+			.body(productFacade.registerProduct(registerRequest, loggedInMember));
 	}
 }

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import dev.cass.knorda.api.product.dto.ProductFindDto;
 import dev.cass.knorda.api.product.dto.ProductRegisterDto;
 import dev.cass.knorda.api.product.exception.ProductNotExistException;
-import dev.cass.knorda.domain.member.Member;
 import dev.cass.knorda.domain.product.Product;
 import dev.cass.knorda.domain.product.ProductRepository;
 import dev.cass.knorda.domain.product.ProductSpecification;
@@ -24,9 +23,7 @@ public class ProductService {
 		return productRepository.findFirstByProductId(productId).orElseThrow(ProductNotExistException::new);
 	}
 
-	public Product save(ProductRegisterDto.RegisterRequest registerRequest, Member member) {
-		Product product = registerRequest.toEntity();
-		product.setMember(member);
+	public Product save(Product product) {
 		return productRepository.saveAndFlush(product);
 	}
 

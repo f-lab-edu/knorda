@@ -17,7 +17,7 @@ import dev.cass.knorda.api.member.service.MemberService;
 import dev.cass.knorda.api.product.dto.ProductFindDto;
 import dev.cass.knorda.api.product.dto.ProductRegisterDto;
 import dev.cass.knorda.api.product.exception.AlreadyExistProductNameException;
-import dev.cass.knorda.api.product.exception.NotYourProductException;
+import dev.cass.knorda.api.product.exception.ProductNotOwnedByLoggedInMemberException;
 import dev.cass.knorda.api.product.service.ProductService;
 import dev.cass.knorda.domain.member.Member;
 import dev.cass.knorda.domain.product.Product;
@@ -97,7 +97,7 @@ class ProductFacadeTest {
 
 		doReturn(member).when(memberService).findMemberByMemberName(memberName);
 		doReturn(false).when(productService).isExistProductName(registerRequest.getProductName());
-		doReturn(product).when(productService).save(registerRequest, member);
+		doReturn(product).when(productService).save(any(Product.class));
 
 		// when
 		ProductRegisterDto.RegisterResponse productRegisterResponse = productFacade.registerProduct(registerRequest,
@@ -184,7 +184,8 @@ class ProductFacadeTest {
 		doReturn(product).when(productService).findById(productId);
 
 		// when
-		assertThrows(NotYourProductException.class, () -> productFacade.deleteProduct(productId, "user"));
+		assertThrows(ProductNotOwnedByLoggedInMemberException.class,
+			() -> productFacade.deleteProduct(productId, "user"));
 
 		// then
 		verify(productService, never()).delete(product);
@@ -249,7 +250,7 @@ class ProductFacadeTest {
 		doReturn(product).when(productService).findById(productId);
 
 		// when
-		assertThrows(NotYourProductException.class,
+		assertThrows(ProductNotOwnedByLoggedInMemberException.class,
 			() -> productFacade.updateProduct(productId, updateRegisterRequest, "user"));
 
 		// then

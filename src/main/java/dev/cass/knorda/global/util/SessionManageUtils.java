@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Component
 public class SessionManageUtils {
 
-	public static final String SESSION_USER = "session_user";
+	public static final String SESSION_MEMBER = "session_member";
 
 	public static void invalidate(HttpSession session) {
 		session.invalidate();
@@ -29,8 +29,8 @@ public class SessionManageUtils {
 		return session.getAttribute(key);
 	}
 
-	public static AuthDto.SessionDto getSessionUser(HttpSession session) {
-		Object sessionObj = getSession(session, SESSION_USER);
+	public static AuthDto.SessionDto getSessionMember(HttpSession session) {
+		Object sessionObj = getSession(session, SESSION_MEMBER);
 		if (!(sessionObj instanceof AuthDto.SessionDto)) {
 			throw new NullSessionException();
 		}
@@ -38,10 +38,10 @@ public class SessionManageUtils {
 	}
 
 	public static String getMemberName(HttpSession session) {
-		return getSessionUser(session).getMemberName();
+		return getSessionMember(session).getMemberName();
 	}
 
 	public static int getMemberId(HttpSession session) {
-		return getSessionUser(session).getMemberId();
+		return getSessionMember(session).getMemberId();
 	}
 }

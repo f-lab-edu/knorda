@@ -35,21 +35,19 @@ import dev.cass.knorda.global.util.SessionManageUtils;
 @ExtendWith(MockitoExtension.class)
 class MemberControllerTest {
 
+	ObjectMapper objectMapper = new ObjectMapper();
 	/**
 	 * InjectMocks - 테스트 대상이 되는 객체에 Mock 객체를 주입시키는 어노테이션
 	 * MemberController 객체를 생성하고, Mock 객체로 정의된 MemberService 객체를 주입시킨다
 	 */
 	@InjectMocks
 	private MemberController memberController;
-
 	/**
 	 * Mock - 해당 객체를 Mock 객체로 만들어주는 어노테이션
 	 */
 	@Mock
 	private MemberService memberService;
-
 	private MockMvc mockMvc;
-	ObjectMapper objectMapper = new ObjectMapper();
 
 	/**
 	 * BeforeEach - JUnit5에서 각 테스트 메소드가 실행되기 전에 실행되는 메소드를 지정하는 어노테이션
@@ -128,7 +126,7 @@ class MemberControllerTest {
 
 		// When
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/members/me")
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, id)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, id)));
 
 		// Then
 		resultActions
@@ -154,7 +152,7 @@ class MemberControllerTest {
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/members")
 			.param("page", "0")
 			.param("size", "10")
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, id)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, id)));
 
 		// Then
 		resultActions
@@ -176,7 +174,7 @@ class MemberControllerTest {
 
 		// When
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/members/{memberId}", id)
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, id)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, id)));
 
 		// Then
 		resultActions
@@ -201,7 +199,7 @@ class MemberControllerTest {
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/members")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(updateMemberRequest))
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, id)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, id)));
 
 		// Then
 		resultActions
@@ -226,7 +224,7 @@ class MemberControllerTest {
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/members/{memberId}", id)
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(updateMemberRequest))
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, id)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, id)));
 
 		// Then
 		resultActions
@@ -243,7 +241,7 @@ class MemberControllerTest {
 
 		// When
 		ResultActions resultActions = mockMvc.perform(delete("/api/v1/members")
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, id)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, id)));
 
 		// Then
 		resultActions
@@ -259,7 +257,7 @@ class MemberControllerTest {
 
 		// When
 		ResultActions resultActions = mockMvc.perform(delete("/api/v1/members/{memberId}", id)
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, id)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, id)));
 
 		// Then
 		resultActions
@@ -289,7 +287,7 @@ class MemberControllerTest {
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/members/password")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(changePasswordRequest))
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, id)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, id)));
 
 		// Then
 		resultActions
@@ -311,7 +309,7 @@ class MemberControllerTest {
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/members/password")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(changePasswordRequest))
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, id)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, id)));
 
 		// Then
 		resultActions

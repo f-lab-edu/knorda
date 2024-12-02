@@ -76,10 +76,13 @@ class ProductServiceTest {
 
 		product.setMember(member);
 
+		Product resultProduct = productQuery.toEntity();
+		resultProduct.setMember(member);
+
 		doReturn(product).when(productRepository).saveAndFlush(any(Product.class));
 
 		// when
-		Product product1 = productService.save(productQuery, member);
+		Product product1 = productService.save(resultProduct);
 
 		// then
 		assertEquals(product1.getName(), product.getName());

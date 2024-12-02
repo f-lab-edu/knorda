@@ -31,14 +31,12 @@ import dev.cass.knorda.global.util.SessionManageUtils;
 
 @ExtendWith(MockitoExtension.class)
 class ProductControllerTest {
+	ObjectMapper objectMapper = new ObjectMapper();
 	@InjectMocks
 	private ProductController productController;
-
 	@Mock
 	private ProductFacade productFacade;
-
 	private MockMvc mockMvc;
-	ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
 	void setUp() {
@@ -86,7 +84,7 @@ class ProductControllerTest {
 
 		// when
 		ResultActions resultActions = mockMvc.perform(delete("/api/v1/products/{productId}", productId)
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, userId)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, userId)));
 
 		// then
 		resultActions
@@ -116,7 +114,7 @@ class ProductControllerTest {
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/products/{productId}", productId)
 			.contentType("application/json")
 			.content(objectMapper.writeValueAsString(updateProductRegisterRequest))
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, userId)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, userId)));
 
 		// then
 		resultActions
@@ -138,7 +136,7 @@ class ProductControllerTest {
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/products/{productId}", productId)
 			.contentType("application/json")
 			.content(objectMapper.writeValueAsString(updateProductRegisterRequest))
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, userId)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, userId)));
 
 		// then
 		resultActions
@@ -243,7 +241,7 @@ class ProductControllerTest {
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/products")
 			.contentType("application/json")
 			.content(objectMapper.writeValueAsString(registerProductRegisterRequest))
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, userId)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, userId)));
 
 		// then
 		resultActions
@@ -265,7 +263,7 @@ class ProductControllerTest {
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/products")
 			.contentType("application/json")
 			.content(objectMapper.writeValueAsString(registerProductRegisterRequest))
-			.sessionAttr(SessionManageUtils.SESSION_USER, new AuthDto.SessionDto(name, userId)));
+			.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, userId)));
 
 		// then
 		resultActions
