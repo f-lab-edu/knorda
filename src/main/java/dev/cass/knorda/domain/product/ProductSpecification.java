@@ -8,7 +8,10 @@ import org.springframework.data.jpa.domain.Specification;
 import dev.cass.knorda.api.product.dto.ProductFindDto;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProductSpecification {
 
 	public static Specification<Product> searchProductQuery(ProductFindDto.GetProductQuery productQuery) {
