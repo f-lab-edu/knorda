@@ -3,6 +3,7 @@ package dev.cass.knorda.api.product.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -11,13 +12,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 
+import dev.cass.knorda.api.product.dto.ProductFindDto;
 import dev.cass.knorda.api.product.dto.ProductRegisterDto;
 import dev.cass.knorda.api.product.exception.ProductNotExistException;
 import dev.cass.knorda.domain.member.Member;
 import dev.cass.knorda.domain.product.Product;
 import dev.cass.knorda.domain.product.ProductRepository;
+import dev.cass.knorda.domain.product.ProductSpecification;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -79,7 +83,7 @@ class ProductServiceTest {
 		Product resultProduct = productQuery.toEntity();
 		resultProduct.setMember(member);
 
-		doReturn(product).when(productRepository).saveAndFlush(any(Product.class));
+		doReturn(product).when(productRepository).save(any(Product.class));
 
 		// when
 		Product product1 = productService.save(resultProduct);
@@ -102,10 +106,12 @@ class ProductServiceTest {
 
 		product.update(productQuery.getProductName(), productQuery.getDescription());
 
-		doReturn(product).when(productRepository).saveAndFlush(product);
+		doReturn(product).when(productRepository).save(product);
+
+		product.update(productQuery.getProductName(), productQuery.getDescription());
 
 		// when
-		Product product1 = productService.update(product, productQuery);
+		Product product1 = productService.save(product);
 
 		// then
 		assertEquals(product1.getName(), productQuery.getProductName());
@@ -147,5 +153,31 @@ class ProductServiceTest {
 
 		// then
 		assertTrue(isExist);
+	}
+
+	@DisplayName("상품 쿼리 조회")
+	@Test
+	void findAllByQuery() {
+		// given
+		ProductFindDto.GetProductQuery productQuery = new ProductFindDto.GetProductQuery("Product 3", null, null, null);
+		Member member = Member.builder()
+			.memberId(1)
+			.memberName("admin")
+			.password("admin")
+			.build();
+		Product product = Product.builder()
+			.productId(3)
+			.name("Product 3")
+			.description("Product 3 description")
+			.member(member)
+			.build();
+
+		Specification<Product> specification = ProductSpecification.searchProductQuery(productQuery);
+
+		// when
+		doReturn(List.of(product)).when(productRepository).findAll(specification);
+
+		// then
+		assertEquals(product.getName(), productService.findAllByQuery(specification).getFirst().getName());
 	}
 }

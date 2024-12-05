@@ -125,7 +125,7 @@ class ProductFacadeTest {
 			.member(member)
 			.build();
 
-		doReturn(List.of(product)).when(productService).findAllByQuery(productQuery);
+		doReturn(List.of(product)).when(productService).findAllByQuery(any());
 
 		// when
 		List<ProductFindDto.GetProductResponse> productResponse = productFacade.getProductListByQuery(productQuery);
@@ -216,7 +216,7 @@ class ProductFacadeTest {
 
 		product.update(updateRegisterRequest.getProductName(), updateRegisterRequest.getDescription());
 
-		doReturn(product).when(productService).update(product, updateRegisterRequest);
+		doReturn(product).when(productService).save(product);
 
 		// when
 		ProductRegisterDto.RegisterResponse productRegisterResponse = productFacade.updateProduct(productId,
@@ -254,7 +254,7 @@ class ProductFacadeTest {
 			() -> productFacade.updateProduct(productId, updateRegisterRequest, "user"));
 
 		// then
-		verify(productService, never()).update(product, updateRegisterRequest);
+		verify(productService, never()).save(product);
 	}
 
 	@DisplayName("상품 수정 - 이름 중복")
@@ -286,7 +286,7 @@ class ProductFacadeTest {
 			() -> productFacade.updateProduct(productId, updateRegisterRequest, memberName));
 
 		// then
-		verify(productService, never()).update(product, updateRegisterRequest);
+		verify(productService, never()).save(product);
 	}
 
 	@DisplayName("상품 수정 - 현재 상품명과 동일")
@@ -313,7 +313,7 @@ class ProductFacadeTest {
 
 		product.update(updateRegisterRequest.getProductName(), updateRegisterRequest.getDescription());
 
-		doReturn(product).when(productService).update(product, updateRegisterRequest);
+		doReturn(product).when(productService).save(product);
 
 		// when
 		ProductRegisterDto.RegisterResponse productRegisterResponse = productFacade.updateProduct(productId,

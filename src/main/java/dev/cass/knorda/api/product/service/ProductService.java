@@ -2,15 +2,13 @@ package dev.cass.knorda.api.product.service;
 
 import java.util.List;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import dev.cass.knorda.api.product.dto.ProductFindDto;
-import dev.cass.knorda.api.product.dto.ProductRegisterDto;
 import dev.cass.knorda.api.product.exception.ProductNotExistException;
 import dev.cass.knorda.domain.product.Product;
 import dev.cass.knorda.domain.product.ProductRepository;
-import dev.cass.knorda.domain.product.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,18 +21,15 @@ public class ProductService {
 		return productRepository.findFirstByProductId(productId).orElseThrow(ProductNotExistException::new);
 	}
 
+	@Transactional
 	public Product save(Product product) {
-		return productRepository.saveAndFlush(product);
+		return productRepository.save(product);
 	}
 
+	@Transactional
 	public void delete(Product product) {
 		product.delete();
 		productRepository.save(product);
-	}
-
-	public Product update(Product product, ProductRegisterDto.RegisterRequest registerRequest) {
-		product.update(registerRequest.getProductName(), registerRequest.getDescription());
-		return productRepository.saveAndFlush(product);
 	}
 
 	@Transactional(readOnly = true)
@@ -43,8 +38,8 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Product> findAllByQuery(ProductFindDto.GetProductQuery productQuery) {
-		return productRepository.findAll(ProductSpecification.searchProductQuery(productQuery));
+	public List<Product> findAllByQuery(Specification<Product> productQuery) {
+		return productRepository.findAll(productQuery);
 	}
 
 }
