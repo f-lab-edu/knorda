@@ -30,7 +30,7 @@ public class AuthService {
 
 		memberRepository.save(member);
 
-		SessionManageUtils.addSession(session, SessionManageUtils.SESSION_USER, AuthDto.SessionDto.of(member));
+		SessionManageUtils.addSession(session, SessionManageUtils.SESSION_MEMBER, AuthDto.SessionDto.of(member));
 
 		return new AuthDto.LoginResponse(member.getMemberName());
 	}

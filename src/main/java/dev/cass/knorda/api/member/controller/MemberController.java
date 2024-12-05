@@ -55,12 +55,12 @@ public class MemberController {
 	@GetMapping("/members/me")
 	public ResponseEntity<RegisterDto.GetMemberResponse> getLoggedInMember(HttpSession session) {
 		int memberId = SessionManageUtils.getMemberId(session);
-		return ResponseEntity.status(HttpStatus.OK).body(memberService.findMemberByMemberId(memberId));
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.findMemberResponseByMemberId(memberId));
 	}
 
 	@GetMapping("/members/{memberId}")
 	public ResponseEntity<RegisterDto.GetMemberResponse> getMember(@PathVariable int memberId) {
-		return ResponseEntity.status(HttpStatus.OK).body(memberService.findMemberByMemberId(memberId));
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.findMemberResponseByMemberId(memberId));
 	}
 
 	/**
@@ -101,8 +101,8 @@ public class MemberController {
 
 	@DeleteMapping("/members/{memberId}")
 	public ResponseEntity<Void> deleteMember(HttpSession session, @PathVariable int memberId) {
-		String loggedInUser = SessionManageUtils.getMemberName(session);
-		memberService.deleteMember(memberId, loggedInUser);
+		String loggedInMember = SessionManageUtils.getMemberName(session);
+		memberService.deleteMember(memberId, loggedInMember);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 

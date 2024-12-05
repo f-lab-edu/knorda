@@ -217,13 +217,13 @@ class MemberServiceTest {
 
 	@DisplayName("사용자 id로 사용자 조회")
 	@Test
-	void findMemberByMemberName() {
+	void findMemberByMemberId() {
 		// given
 		Member member = Member.builder().memberId(1).memberName("admin").build();
 		doReturn(Optional.of(member)).when(memberRepository).findFirstByMemberId(1);
 
 		// when
-		RegisterDto.GetMemberResponse result = memberService.findMemberByMemberId(1);
+		RegisterDto.GetMemberResponse result = memberService.findMemberResponseByMemberId(1);
 
 		// then
 		assertEquals("admin", result.getMemberName());
@@ -236,6 +236,20 @@ class MemberServiceTest {
 		doReturn(Optional.empty()).when(memberRepository).findFirstByMemberId(10);
 
 		// when
-		assertThrows(MemberNotFoundException.class, () -> memberService.findMemberByMemberId(10));
+		assertThrows(MemberNotFoundException.class, () -> memberService.findMemberResponseByMemberId(10));
+	}
+
+	@DisplayName("사용자명으로 사용자 조회")
+	@Test
+	void findMemberByMemberName() {
+		// given
+		Member member = Member.builder().memberId(1).memberName("admin").build();
+		doReturn(Optional.of(member)).when(memberRepository).findFirstByMemberName("admin");
+
+		// when
+		Member result = memberService.findMemberByMemberName("admin");
+
+		// then
+		assertEquals(member.getMemberName(), result.getMemberName());
 	}
 }

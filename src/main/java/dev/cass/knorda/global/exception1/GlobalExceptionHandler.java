@@ -1,5 +1,6 @@
 package dev.cass.knorda.global.exception1;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -39,6 +40,12 @@ public class GlobalExceptionHandler {
 		}
 
 		return response(HttpStatus.BAD_REQUEST, message.toString());
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+		log.error("DataIntegrityViolationException : {}", e.getMessage());
+		return response(HttpStatus.BAD_REQUEST, "저장 시 오류가 발생하였습니다.");
 	}
 
 	private ResponseEntity<ErrorResponse> response(HttpStatus status, String message) {

@@ -26,14 +26,12 @@ import dev.cass.knorda.global.util.SessionManageUtils;
 
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
+	ObjectMapper objectMapper = new ObjectMapper();
 	@InjectMocks
 	private AuthController authController;
-
 	@Mock
 	private AuthService authService;
-
 	private MockMvc mockMvc;
-	ObjectMapper objectMapper = new ObjectMapper();
 	private MockHttpSession session = new MockHttpSession();
 
 	@BeforeEach
@@ -80,7 +78,7 @@ class AuthControllerTest {
 	@Test
 	void logout() throws Exception {
 		// Given
-		SessionManageUtils.addSession(session, SessionManageUtils.SESSION_USER, new AuthDto.SessionDto("admin", 1));
+		SessionManageUtils.addSession(session, SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto("admin", 1));
 
 		// When
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/logout")
