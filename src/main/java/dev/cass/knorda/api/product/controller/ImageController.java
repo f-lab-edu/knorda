@@ -1,10 +1,12 @@
 package dev.cass.knorda.api.product.controller;
 
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,12 +37,26 @@ public class ImageController {
 	/**
 	 * 애플리케이션 서버에 저장된 이미지를 리턴해 주는 메소드
 	 */
-	@GetMapping(value = "/images/{imageName}",
-		produces = {"image/jpg", "image/jpeg", "image/png", "image/gif"})
-	public UrlResource getImage(@PathVariable String imageName) throws MalformedURLException {
+	@GetMapping(value = "/images/{imageName}")
+	public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
 		String encodedImageName = URLEncoder.encode(imageName, StandardCharsets.UTF_8);
 		String imageDir = "./image/";
-		return new UrlResource("file:" + imageDir + encodedImageName);
+		try {
+			UrlResource urlResource = new UrlResource("file:" + imageDir + encodedImageName);
+			String contentType = Files.probeContentType(urlResource.getFile().toPath());
+
+			if (!urlResource.exists()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			}
+
+			return ResponseEntity.status(HttpStatus.OK)
+				.header(HttpHeaders.CONTENT_TYPE, contentType)
+				.body(urlResource);
+
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
 	}
 
 	@PostMapping("/products/{productId}/images")

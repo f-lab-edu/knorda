@@ -81,6 +81,19 @@ class ImageControllerTest {
 		assertTrue(newFile.delete());
 	}
 
+	@DisplayName("이미지 조회 - 이미지가 없음")
+	@Test
+	void getImage_NotFound() throws Exception {
+		// given
+		String imageName = "image.png";
+
+		// when
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/images/{imageName}", imageName));
+
+		// then
+		resultActions.andExpect(status().isNotFound());
+	}
+
 	@DisplayName("이미지 등록")
 	@Test
 	void registerImage() throws Exception {
