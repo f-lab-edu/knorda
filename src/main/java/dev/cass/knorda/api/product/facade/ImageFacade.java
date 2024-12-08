@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageFacade {
 	private final ProductService productService;
-	private final ImageStore LocalImageStore;
+	private final ImageStore localImageStore;
 
 	@Transactional
 	public ImageDto.ImageResponse registerImage(int productId, ImageDto.ImageRequest imageRequest,
@@ -30,7 +30,7 @@ public class ImageFacade {
 			throw new ProductImageAlreadyExistException();
 		}
 
-		String imageUrl = LocalImageStore.storeImage(imageRequest.getImage(), imageRequest.getImageName());
+		String imageUrl = localImageStore.storeImage(imageRequest.getImage(), imageRequest.getImageName());
 
 		product.updateImage(imageUrl);
 		return ImageDto.ImageResponse.of(productService.save(product));
@@ -47,7 +47,7 @@ public class ImageFacade {
 			throw new ProductImageNotExistException();
 		}
 
-		String imageUrl = LocalImageStore.updateImage(imageRequest.getImage(), imageRequest.getImageName(),
+		String imageUrl = localImageStore.updateImage(imageRequest.getImage(), imageRequest.getImageName(),
 			product.getImageUrl());
 
 		product.updateImage(imageUrl);
@@ -64,7 +64,7 @@ public class ImageFacade {
 			throw new ProductImageNotExistException();
 		}
 
-		if (!LocalImageStore.deleteImage(product.getImageUrl())) {
+		if (!localImageStore.deleteImage(product.getImageUrl())) {
 			throw new FileDeleteFailedException();
 		}
 		product.updateImage(null);

@@ -1,6 +1,8 @@
 package dev.cass.knorda.api.product.controller;
 
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -36,8 +38,9 @@ public class ImageController {
 	@GetMapping(value = "/images/{imageName}",
 		produces = {"image/jpg", "image/jpeg", "image/png", "image/gif"})
 	public UrlResource getImage(@PathVariable String imageName) throws MalformedURLException {
-		String image_dir = "./image/";
-		return new UrlResource("file:" + image_dir + imageName);
+		String encodedImageName = URLEncoder.encode(imageName, StandardCharsets.UTF_8);
+		String imageDir = "./image/";
+		return new UrlResource("file:" + imageDir + encodedImageName);
 	}
 
 	@PostMapping("/products/{productId}/images")

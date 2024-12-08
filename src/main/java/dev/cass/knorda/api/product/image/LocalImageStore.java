@@ -2,6 +2,7 @@ package dev.cass.knorda.api.product.image;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,10 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class LocalImageStore implements ImageStore {
-	private final String IMAGE_PATH = "./image/";
+	private static final String IMAGE_PATH = "./image/";
+
+	private static String IMAGE_URL;
 
 	@Value("${image.url}")
-	private String IMAGE_URL;
+	public void setIMAGE_URL(String IMAGE_URL) {
+		LocalImageStore.IMAGE_URL = IMAGE_URL;
+	}
 
 	@Override
 	public String storeImage(byte[] imageBytes, String imageName) {
@@ -55,10 +60,16 @@ public class LocalImageStore implements ImageStore {
 		// 이미지를 삭제한다.
 		String imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
 		File file = new File(IMAGE_PATH + imageName);
-		if (file.exists()) {
-			return file.delete();
+		try {
+			if (file.exists()) {
+				Files.delete(file.toPath());
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return false;
 		}
-		return false;
+
+		return true;
 	}
 
 	@Override

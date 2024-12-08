@@ -31,7 +31,7 @@ class ImageFacadeTest {
 	private ProductService productService;
 
 	@Mock
-	private ImageStore LocalImageStore;
+	private ImageStore localImageStore;
 
 	@DisplayName("이미지 등록")
 	@Test
@@ -62,7 +62,7 @@ class ImageFacadeTest {
 			.build();
 
 		doReturn(product).when(productService).findById(productId);
-		doReturn(imageUrl).when(LocalImageStore).storeImage(any(), any());
+		doReturn(imageUrl).when(localImageStore).storeImage(any(), any());
 
 		doReturn(productResult).when(productService).save(any(Product.class));
 		// when
@@ -155,7 +155,7 @@ class ImageFacadeTest {
 			.build();
 
 		doReturn(product).when(productService).findById(productId);
-		doReturn(newImageUrl).when(LocalImageStore).updateImage(any(), eq(imageRequest.getImageName()), eq(imageUrl));
+		doReturn(newImageUrl).when(localImageStore).updateImage(any(), eq(imageRequest.getImageName()), eq(imageUrl));
 
 		doReturn(productResult).when(productService).save(any(Product.class));
 
@@ -238,7 +238,7 @@ class ImageFacadeTest {
 			.build();
 
 		doReturn(product).when(productService).findById(productId);
-		doReturn(true).when(LocalImageStore).deleteImage(imageUrl);
+		doReturn(true).when(localImageStore).deleteImage(imageUrl);
 
 		// when
 		imageFacade.deleteImage(productId, "admin");
@@ -316,7 +316,7 @@ class ImageFacadeTest {
 			.build();
 
 		doReturn(product).when(productService).findById(productId);
-		doReturn(false).when(LocalImageStore).deleteImage(imageUrl);
+		doReturn(false).when(localImageStore).deleteImage(imageUrl);
 
 		// when then
 		assertThrows(FileDeleteFailedException.class, () -> imageFacade.deleteImage(productId, "admin"));
