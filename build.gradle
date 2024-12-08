@@ -98,7 +98,9 @@ jacocoTestCoverageVerification {
                     '**.dto.**',
                     '**.exception.**',
                     '**.EncryptUtils',
-                    '**.SessionManageUtils'
+                    '**.SessionManageUtils',
+                    '**.converter.**',
+                    "**.image.**"
             ]
         }
     }

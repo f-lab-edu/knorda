@@ -27,3 +27,6 @@ encrypt:
 
 logging.level.org.hibernate: INFO
 logging.level.org.springframework: INFO
+
+image:
+  url: "http://localhost:8080/api/v1/images/"
