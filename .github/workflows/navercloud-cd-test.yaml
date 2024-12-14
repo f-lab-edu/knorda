@@ -1,0 +1,51 @@
+name: Naver Cloud CD Test
+
+on:
+  pull_request:
+    branches:
+      [ "feature/nc-cd" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Add application properties secret
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application.yaml
+        env:
+          encrypt.salt: ${{ secrets.ENCRYPT_SALT }}
+          spring.datasource.url: ${{ secrets.DB_URL_PROD }}
+          spring.datasource.username: ${{ secrets.DB_USERNAME_PROD }}
+          spring.datasource.password: ${{ secrets.DB_PASS_PROD }}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: build
+
+      - name: Zip the build file
+        run: zip -r -qq -j ./knorda-test.zip ./build/libs/knorda-0.0.1-SNAPSHOT.jar
+
+      - name: Deliver to Naver Cloud
+        uses: prewk/s3-cp-action@v2
+        with:
+          aws_access_key_id: ${{ secrets.NC_API_KEY }}
+          aws_secret_access_key: ${{ secrets.NC_API_SECRET }}
+          source: './knorda-test.zip'
+          aws_s3_endpoint: 'https://kr.object.ncloudstorage.com'
+          dest: ${{ secrets.NC_BUCKET_DIR }}
+
