@@ -1,7 +1,7 @@
 name: Naver Cloud CD Test
 
 on:
-  pull_request:
+  push:
     branches:
       [ "feature/nc-cd" ]
 
