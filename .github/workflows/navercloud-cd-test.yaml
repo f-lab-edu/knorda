@@ -3,7 +3,7 @@ name: Naver Cloud CD Test
 on:
   push:
     branches:
-      [ "feature/nc-cd" ]
+      [ "main" ]
 
 jobs:
   build:
@@ -28,6 +28,7 @@ jobs:
           spring.datasource.url: ${{ secrets.DB_URL_PROD }}
           spring.datasource.username: ${{ secrets.DB_USERNAME_PROD }}
           spring.datasource.password: ${{ secrets.DB_PASS_PROD }}
+          server.port: ${{ secrets.SERVER_PORT_PROD }}
 
       - name: Add application test properties secrets
         uses: microsoft/variable-substitution@v1
@@ -56,3 +57,11 @@ jobs:
           aws_s3_endpoint: 'https://kr.object.ncloudstorage.com'
           dest: ${{ secrets.NC_BUCKET_DIR }}
 
+      - name: Trigger Naver Cloud Deploy
+        uses: cass07/navercloud-api@v2
+        with:
+          nc_api_uri: ${{ format('/api/v1/project/{0}/stage/{1}/scenario/{2}/deploy', secrets.NC_PROJECT_ID, secrets.NC_STAGE_ID, secrets.NC_SCENARIO_ID) }}
+          nc_api_base_url: 'https://vpcsourcedeploy.apigw.ntruss.com'
+          method: 'POST'
+          nc_access_key: ${{ secrets.NC_API_KEY }}
+          nc_secret_key: ${{ secrets.NC_API_SECRET }}
