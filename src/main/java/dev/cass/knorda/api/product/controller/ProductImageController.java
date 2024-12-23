@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,17 +31,6 @@ public class ProductImageController {
 		String loggedInMember = SessionManageUtils.getMemberName(session);
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(productImageFacade.registerImage(productId,
-				new ProductImageDto.ImageRequest(conversionService.convert(image, byte[].class),
-					image.getOriginalFilename()),
-				loggedInMember));
-	}
-
-	@PutMapping("/products/{productId}/images")
-	public ResponseEntity<ProductImageDto.ImageResponse> updateImage(@PathVariable int productId, MultipartFile image,
-		HttpSession session) {
-		String loggedInMember = SessionManageUtils.getMemberName(session);
-		return ResponseEntity.status(HttpStatus.OK)
-			.body(productImageFacade.updateImage(productId,
 				new ProductImageDto.ImageRequest(conversionService.convert(image, byte[].class),
 					image.getOriginalFilename()),
 				loggedInMember));

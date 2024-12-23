@@ -163,34 +163,4 @@ class LocalImageStoreTest {
 		assertThrows(FileExtentionInvalidException.class, () -> localImageStore.storeImage(image, fileName));
 	}
 
-	@DisplayName("Local 이미지 수정")
-	@Test
-	void updateImage() throws IOException {
-		// given
-		String fileName = "test.png";
-		byte[] image = imageBytesPngSample.clone();
-
-		String savedFileUrl = localImageStore.storeImage(image, fileName);
-
-		// resource directory의 test2 이미지 읽어오기
-		URL fileDir2 = getClass().getClassLoader().getResource("image.png");
-		assertNotNull(fileDir2);
-
-		File file2 = new File(fileDir2.getFile());
-		String fileName2 = file2.getName();
-		byte[] image2 = Files.readAllBytes(file2.toPath());
-
-		// when
-		String updatedFileUrl = localImageStore.updateImage(image2, fileName2, savedFileUrl);
-		String updatedFileName = updatedFileUrl.substring(updatedFileUrl.lastIndexOf("/") + 1);
-
-		// then
-		File resultFile = new File("./image/" + updatedFileName);
-		assertTrue(resultFile.exists());
-		assertArrayEquals(image2, Files.readAllBytes(resultFile.toPath()));
-
-		// delete
-		assertTrue(resultFile.delete());
-	}
-
 }

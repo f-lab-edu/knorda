@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @V1Controller
 public class ImageController {
-	private final static String IMAGE_DIR = "./image/";
 	private final ImageService imageService;
 
 	/**

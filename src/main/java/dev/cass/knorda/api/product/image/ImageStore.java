@@ -19,15 +19,6 @@ public interface ImageStore {
 	 */
 	boolean deleteImage(String imageUrl);
 
-	/**
-	 * 이미지를 수정한다.
-	 * @param imageBytes 이미지 바이트 배열
-	 * @param imageName 이미지 이름
-	 * @param imageUrl 기존 이미지 URL
-	 * @return 새 이미지 URL
-	 */
-	String updateImage(byte[] imageBytes, String imageName, String imageUrl);
-
 	// 새로운 이미지 이름을 생성
 	default String createImageName(String fileName) {
 		return UUID.randomUUID() + getImageExtension(fileName);

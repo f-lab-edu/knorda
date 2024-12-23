@@ -99,11 +99,4 @@ public class LocalImageStore implements ImageStore {
 
 		return true;
 	}
-
-	@Override
-	public String updateImage(byte[] imageBytes, String imageName, String imageUrl) {
-		// 이미지를 수정한다.
-		deleteImage(imageUrl);
-		return storeImage(imageBytes, imageName);
-	}
 }

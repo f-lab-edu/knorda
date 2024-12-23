@@ -76,36 +76,6 @@ class ProductImageControllerTest {
 		resultActions.andExpect(status().isCreated());
 	}
 
-	@DisplayName("이미지 수정")
-	@Test
-	void updateImage() throws Exception {
-		// given
-		int productId = 1;
-		String imageName = "1.png";
-		String name = "admin";
-		int userId = 1;
-		byte[] bytes = new byte[1];
-
-		MockMultipartFile image = new MockMultipartFile("image", imageName, "image/png", bytes);
-
-		ProductImageDto.ImageResponse imageResponse = new ProductImageDto.ImageResponse(1,
-			"http://localhost:8080/api/v1/images/1.png");
-
-		doReturn(imageResponse).when(productImageFacade)
-			.updateImage(eq(productId), any(ProductImageDto.ImageRequest.class), eq(name));
-
-		doReturn(bytes).when(conversionService).convert(image, byte[].class);
-
-		// when
-		ResultActions resultActions = mockMvc.perform(
-			multipart(HttpMethod.PUT, "/api/v1/products/{productId}/images", productId)
-				.file(image)
-				.sessionAttr(SessionManageUtils.SESSION_MEMBER, new AuthDto.SessionDto(name, userId)));
-
-		// then
-		resultActions.andExpect(status().isOk());
-	}
-
 	@DisplayName("이미지 삭제")
 	@Test
 	void deleteImage() throws Exception {

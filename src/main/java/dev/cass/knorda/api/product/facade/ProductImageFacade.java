@@ -37,24 +37,6 @@ public class ProductImageFacade {
 	}
 
 	@Transactional
-	public ProductImageDto.ImageResponse updateImage(int productId, ProductImageDto.ImageRequest imageRequest,
-		String loggedInMember) {
-		Product product = productService.findById(productId);
-		if (!product.getMember().getMemberName().equals(loggedInMember)) {
-			throw new ProductNotOwnedByLoggedInMemberException();
-		}
-		if (product.getImageUrl() == null) {
-			throw new ProductImageNotExistException();
-		}
-
-		String imageUrl = localImageStore.updateImage(imageRequest.getImage(), imageRequest.getImageName(),
-			product.getImageUrl());
-
-		product.updateImage(imageUrl);
-		return ProductImageDto.ImageResponse.of(productService.save(product));
-	}
-
-	@Transactional
 	public void deleteImage(int productId, String loggedInMember) {
 		Product product = productService.findById(productId);
 		if (!product.getMember().getMemberName().equals(loggedInMember)) {
