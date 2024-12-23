@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @SpringBootTest
 class MultipartToBytesConverterTest {
 
-	@DisplayName("MultipartFile을 byte[]로 변환한다.")
+	@DisplayName("MultipartFile을 byte[]로 변환")
 	@Test
 	void convert() {
 		// given

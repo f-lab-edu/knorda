@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
-import dev.cass.knorda.api.product.dto.ImageDto;
+import dev.cass.knorda.api.product.dto.ProductImageDto;
 import dev.cass.knorda.api.product.exception.FileDeleteFailedException;
 import dev.cass.knorda.api.product.exception.ProductImageAlreadyExistException;
 import dev.cass.knorda.api.product.exception.ProductImageNotExistException;
@@ -23,9 +23,9 @@ import dev.cass.knorda.domain.product.Product;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-class ImageFacadeTest {
+class ProductImageFacadeTest {
 	@InjectMocks
-	private ImageFacade imageFacade;
+	private ProductImageFacade productImageFacade;
 
 	@Mock
 	private ProductService productService;
@@ -49,7 +49,7 @@ class ImageFacadeTest {
 			.description("Product 1 description")
 			.member(member)
 			.build();
-		ImageDto.ImageRequest imageRequest = new ImageDto.ImageRequest(new byte[1], "1.png");
+		ProductImageDto.ImageRequest imageRequest = new ProductImageDto.ImageRequest(new byte[1], "1.png");
 
 		String imageUrl = "http://localhost:8080/api/v1/images/1.png";
 
@@ -66,7 +66,8 @@ class ImageFacadeTest {
 
 		doReturn(productResult).when(productService).save(any(Product.class));
 		// when
-		ImageDto.ImageResponse imageResponse = imageFacade.registerImage(productId, imageRequest, "admin");
+		ProductImageDto.ImageResponse imageResponse = productImageFacade.registerImage(productId, imageRequest,
+			"admin");
 
 		// then
 		assertEquals(imageResponse.getImageUrl(), imageUrl);
@@ -88,13 +89,13 @@ class ImageFacadeTest {
 			.description("Product 1 description")
 			.member(member)
 			.build();
-		ImageDto.ImageRequest imageRequest = new ImageDto.ImageRequest(new byte[1], "1.png");
+		ProductImageDto.ImageRequest imageRequest = new ProductImageDto.ImageRequest(new byte[1], "1.png");
 
 		doReturn(product).when(productService).findById(productId);
 
 		// when then
 		assertThrows(ProductNotOwnedByLoggedInMemberException.class,
-			() -> imageFacade.registerImage(productId, imageRequest, "user"));
+			() -> productImageFacade.registerImage(productId, imageRequest, "user"));
 	}
 
 	@DisplayName("이미지 등록 - 이미지가 존재함")
@@ -114,13 +115,13 @@ class ImageFacadeTest {
 			.member(member)
 			.imageUrl("http://localhost:8080/api/v1/images/1.png")
 			.build();
-		ImageDto.ImageRequest imageRequest = new ImageDto.ImageRequest(new byte[1], "1.png");
+		ProductImageDto.ImageRequest imageRequest = new ProductImageDto.ImageRequest(new byte[1], "1.png");
 
 		doReturn(product).when(productService).findById(productId);
 
 		// when then
 		assertThrows(ProductImageAlreadyExistException.class,
-			() -> imageFacade.registerImage(productId, imageRequest, "admin"));
+			() -> productImageFacade.registerImage(productId, imageRequest, "admin"));
 	}
 
 	@DisplayName("이미지 수정")
@@ -142,7 +143,7 @@ class ImageFacadeTest {
 			.imageUrl(imageUrl)
 			.member(member)
 			.build();
-		ImageDto.ImageRequest imageRequest = new ImageDto.ImageRequest(new byte[1], "2.png");
+		ProductImageDto.ImageRequest imageRequest = new ProductImageDto.ImageRequest(new byte[1], "2.png");
 
 		String newImageUrl = "http://localhost:8080/api/v1/images/2.png";
 
@@ -160,7 +161,7 @@ class ImageFacadeTest {
 		doReturn(productResult).when(productService).save(any(Product.class));
 
 		// when
-		ImageDto.ImageResponse imageResponse = imageFacade.updateImage(productId, imageRequest, "admin");
+		ProductImageDto.ImageResponse imageResponse = productImageFacade.updateImage(productId, imageRequest, "admin");
 
 		// then
 		assertEquals(imageResponse.getImageUrl(), newImageUrl);
@@ -183,13 +184,13 @@ class ImageFacadeTest {
 			.member(member)
 			.imageUrl("http://localhost:8080/api/v1/images/1.png")
 			.build();
-		ImageDto.ImageRequest imageRequest = new ImageDto.ImageRequest(new byte[1], "2.png");
+		ProductImageDto.ImageRequest imageRequest = new ProductImageDto.ImageRequest(new byte[1], "2.png");
 
 		doReturn(product).when(productService).findById(productId);
 
 		// when then
 		assertThrows(ProductNotOwnedByLoggedInMemberException.class,
-			() -> imageFacade.updateImage(productId, imageRequest, "user"));
+			() -> productImageFacade.updateImage(productId, imageRequest, "user"));
 	}
 
 	@DisplayName("이미지 수정 - 등록된 이미지가 없음")
@@ -208,13 +209,13 @@ class ImageFacadeTest {
 			.description("Product 1 description")
 			.member(member)
 			.build();
-		ImageDto.ImageRequest imageRequest = new ImageDto.ImageRequest(new byte[1], "2.png");
+		ProductImageDto.ImageRequest imageRequest = new ProductImageDto.ImageRequest(new byte[1], "2.png");
 
 		doReturn(product).when(productService).findById(productId);
 
 		// when then
 		assertThrows(ProductImageNotExistException.class,
-			() -> imageFacade.updateImage(productId, imageRequest, "admin"));
+			() -> productImageFacade.updateImage(productId, imageRequest, "admin"));
 	}
 
 	@DisplayName("이미지 삭제")
@@ -241,7 +242,7 @@ class ImageFacadeTest {
 		doReturn(true).when(localImageStore).deleteImage(imageUrl);
 
 		// when
-		imageFacade.deleteImage(productId, "admin");
+		productImageFacade.deleteImage(productId, "admin");
 
 		// then
 		assertNull(product.getImageUrl());
@@ -269,7 +270,8 @@ class ImageFacadeTest {
 		doReturn(product).when(productService).findById(productId);
 
 		// when then
-		assertThrows(ProductNotOwnedByLoggedInMemberException.class, () -> imageFacade.deleteImage(productId, "user"));
+		assertThrows(ProductNotOwnedByLoggedInMemberException.class,
+			() -> productImageFacade.deleteImage(productId, "user"));
 	}
 
 	@DisplayName("이미지 삭제 - 이미지가 존재하지 않음")
@@ -292,7 +294,7 @@ class ImageFacadeTest {
 		doReturn(product).when(productService).findById(productId);
 
 		// when then
-		assertThrows(ProductImageNotExistException.class, () -> imageFacade.deleteImage(productId, "admin"));
+		assertThrows(ProductImageNotExistException.class, () -> productImageFacade.deleteImage(productId, "admin"));
 	}
 
 	@DisplayName("이미지 삭제 - 파일 삭제 실패")
@@ -319,7 +321,7 @@ class ImageFacadeTest {
 		doReturn(false).when(localImageStore).deleteImage(imageUrl);
 
 		// when then
-		assertThrows(FileDeleteFailedException.class, () -> imageFacade.deleteImage(productId, "admin"));
+		assertThrows(FileDeleteFailedException.class, () -> productImageFacade.deleteImage(productId, "admin"));
 	}
 
 }

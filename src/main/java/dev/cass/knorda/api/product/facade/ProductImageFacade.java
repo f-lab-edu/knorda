@@ -3,7 +3,7 @@ package dev.cass.knorda.api.product.facade;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import dev.cass.knorda.api.product.dto.ImageDto;
+import dev.cass.knorda.api.product.dto.ProductImageDto;
 import dev.cass.knorda.api.product.exception.FileDeleteFailedException;
 import dev.cass.knorda.api.product.exception.ProductImageAlreadyExistException;
 import dev.cass.knorda.api.product.exception.ProductImageNotExistException;
@@ -15,12 +15,12 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class ImageFacade {
+public class ProductImageFacade {
 	private final ProductService productService;
 	private final ImageStore localImageStore;
 
 	@Transactional
-	public ImageDto.ImageResponse registerImage(int productId, ImageDto.ImageRequest imageRequest,
+	public ProductImageDto.ImageResponse registerImage(int productId, ProductImageDto.ImageRequest imageRequest,
 		String loggedInMember) {
 		Product product = productService.findById(productId);
 		if (!product.getMember().getMemberName().equals(loggedInMember)) {
@@ -33,11 +33,11 @@ public class ImageFacade {
 		String imageUrl = localImageStore.storeImage(imageRequest.getImage(), imageRequest.getImageName());
 
 		product.updateImage(imageUrl);
-		return ImageDto.ImageResponse.of(productService.save(product));
+		return ProductImageDto.ImageResponse.of(productService.save(product));
 	}
 
 	@Transactional
-	public ImageDto.ImageResponse updateImage(int productId, ImageDto.ImageRequest imageRequest,
+	public ProductImageDto.ImageResponse updateImage(int productId, ProductImageDto.ImageRequest imageRequest,
 		String loggedInMember) {
 		Product product = productService.findById(productId);
 		if (!product.getMember().getMemberName().equals(loggedInMember)) {
@@ -51,7 +51,7 @@ public class ImageFacade {
 			product.getImageUrl());
 
 		product.updateImage(imageUrl);
-		return ImageDto.ImageResponse.of(productService.save(product));
+		return ProductImageDto.ImageResponse.of(productService.save(product));
 	}
 
 	@Transactional

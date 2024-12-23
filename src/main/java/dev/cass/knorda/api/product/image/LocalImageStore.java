@@ -7,14 +7,19 @@ import java.nio.file.Files;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import dev.cass.knorda.api.product.exception.FileExtentionInvalidException;
+import dev.cass.knorda.api.product.exception.FileHeaderInvalidException;
 import dev.cass.knorda.api.product.exception.FileIsNullException;
+import dev.cass.knorda.api.product.exception.FileNameInvalidException;
 import dev.cass.knorda.api.product.exception.FileSaveFailedException;
+import dev.cass.knorda.api.product.exception.FileSizeInvalidException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class LocalImageStore implements ImageStore {
 	private static final String IMAGE_PATH = "./image/";
+	private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 	private static String IMAGE_URL;
 
@@ -23,34 +28,57 @@ public class LocalImageStore implements ImageStore {
 		LocalImageStore.IMAGE_URL = IMAGE_URL;
 	}
 
-	@Override
-	public String storeImage(byte[] imageBytes, String imageName) {
-		// 이미지를 저장하고 저장된 이미지의 URL을 반환한다.
+	private void validateImageBytes(byte[] imageBytes) {
 		if (imageBytes == null) {
 			throw new FileIsNullException();
 		}
 
-		try {
-			// 이미지를 저장한다.
-			String newImageName = createImageName(imageName);
-			File newDir = new File(IMAGE_PATH);
+		if (imageBytes.length > MAX_FILE_SIZE) {
+			throw new FileSizeInvalidException();
+		}
 
-			if (!newDir.exists()) {
-				newDir.mkdir();
-			}
+		// byte check
+		if (!ImageCheckUtils.isImageHeaderMatch(imageBytes)) {
+			throw new FileHeaderInvalidException();
+		}
+	}
 
-			File file = new File(newDir, newImageName);
-			log.info(file.getAbsolutePath());
+	private void validateImageName(String imageName) {
+		if (imageName == null || imageName.isEmpty()) {
+			throw new FileNameInvalidException();
+		}
 
-			FileOutputStream fos = new FileOutputStream(file);
+		if (!ImageCheckUtils.isImageExtensionMatch(imageName)) {
+			throw new FileExtentionInvalidException();
+		}
+	}
+
+	// 이미지를 저장하고 저장된 이미지의 URL을 반환한다.
+	@Override
+	public String storeImage(byte[] imageBytes, String imageName) {
+
+		validateImageBytes(imageBytes);
+
+		validateImageName(imageName);
+
+		String newImageName = createImageName(imageName);
+		File newDir = new File(IMAGE_PATH);
+
+		if (!newDir.exists()) {
+			newDir.mkdir();
+		}
+
+		File file = new File(newDir, newImageName);
+		log.info(file.getAbsolutePath());
+
+		try (FileOutputStream fos = new FileOutputStream(file)) {
 			fos.write(imageBytes);
-			fos.close();
 
 			log.info(newImageName);
 			return IMAGE_URL + newImageName;
 		} catch (Exception e) {
 			// 이미지 저장에 실패하면 예외를 던진다.
-			log.error(e.getMessage());
+			log.error("이미지 저장에 실패했습니다. 이미지 이름: {}", newImageName, e);
 			throw new FileSaveFailedException();
 		}
 	}
@@ -65,7 +93,7 @@ public class LocalImageStore implements ImageStore {
 				Files.delete(file.toPath());
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("이미지 삭제에 실패했습니다. 이미지 이름: {}", imageName, e);
 			return false;
 		}
 
