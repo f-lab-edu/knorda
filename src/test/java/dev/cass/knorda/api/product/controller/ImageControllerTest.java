@@ -48,7 +48,6 @@ class ImageControllerTest {
 	@Test
 	void getImage() throws Exception {
 		String imageName = "image.png";
-		String imageDir = "./image/";
 		URL fileDir = getClass().getClassLoader().getResource(imageName);
 		assertNotNull(fileDir);
 

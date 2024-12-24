@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class ImageService {
-	private final static String IMAGE_DIR = "./image/";
+	private static final String IMAGE_DIR = "./image/";
 
 	public ImageDto.ImageResponse getImageResource(String imageName) {
 		String encodedImageName = URLEncoder.encode(imageName, StandardCharsets.UTF_8);

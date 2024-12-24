@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class LocalImageStore implements ImageStore {
 	private static final String IMAGE_PATH = "./image/";
-	private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+	private static final long MAX_FILE_SIZE = 10L * 1024 * 1024; // 10MB
 
 	private static String IMAGE_URL;
 
