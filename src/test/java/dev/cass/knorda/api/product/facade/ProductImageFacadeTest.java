@@ -20,6 +20,7 @@ import dev.cass.knorda.api.product.image.ImageStore;
 import dev.cass.knorda.api.product.service.ProductService;
 import dev.cass.knorda.domain.member.Member;
 import dev.cass.knorda.domain.product.Product;
+import dev.cass.knorda.global.util.NamedLockManager;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +30,9 @@ class ProductImageFacadeTest {
 
 	@Mock
 	private ProductService productService;
+
+	@Mock
+	private NamedLockManager namedLockManager;
 
 	@Mock
 	private ImageStore localImageStore;
@@ -65,6 +69,14 @@ class ProductImageFacadeTest {
 		doReturn(imageUrl).when(localImageStore).storeImage(any(), any());
 
 		doReturn(productResult).when(productService).save(any(Product.class));
+
+		doAnswer(invocationOnMock -> {
+			NamedLockManager.NamedLockCallback<ProductImageDto.ImageResponse> callback = invocationOnMock.getArgument(
+				2);
+
+			return callback.doInLock();
+		}).when(namedLockManager).executeWithNamedLock(eq("product_image_" + productId), eq(20L), any());
+
 		// when
 		ProductImageDto.ImageResponse imageResponse = productImageFacade.registerImage(productId, imageRequest,
 			"admin");
@@ -93,6 +105,13 @@ class ProductImageFacadeTest {
 
 		doReturn(product).when(productService).findById(productId);
 
+		doAnswer(invocationOnMock -> {
+			NamedLockManager.NamedLockCallback<ProductImageDto.ImageResponse> callback = invocationOnMock.getArgument(
+				2);
+
+			return callback.doInLock();
+		}).when(namedLockManager).executeWithNamedLock(eq("product_image_" + productId), eq(20L), any());
+
 		// when then
 		assertThrows(ProductNotOwnedByLoggedInMemberException.class,
 			() -> productImageFacade.registerImage(productId, imageRequest, "user"));
@@ -118,6 +137,13 @@ class ProductImageFacadeTest {
 		ProductImageDto.ImageRequest imageRequest = new ProductImageDto.ImageRequest(new byte[1], "1.png");
 
 		doReturn(product).when(productService).findById(productId);
+
+		doAnswer(invocationOnMock -> {
+			NamedLockManager.NamedLockCallback<ProductImageDto.ImageResponse> callback = invocationOnMock.getArgument(
+				2);
+
+			return callback.doInLock();
+		}).when(namedLockManager).executeWithNamedLock(eq("product_image_" + productId), eq(20L), any());
 
 		// when then
 		assertThrows(ProductImageAlreadyExistException.class,
@@ -147,6 +173,15 @@ class ProductImageFacadeTest {
 		doReturn(product).when(productService).findById(productId);
 		doReturn(true).when(localImageStore).deleteImage(imageUrl);
 
+		// generic type <?> = <Object>라는 뜻
+		// 삭제 로직에서 반환값이 없는 deleteImageInternal이 람다로 사용되기 때문에, ?로 설정해줬음
+		doAnswer(invocationOnMock -> {
+			NamedLockManager.NamedLockCallback<?> callback = invocationOnMock.getArgument(
+				2);
+
+			return callback.doInLock();
+		}).when(namedLockManager).executeWithNamedLock(eq("product_image_" + productId), eq(20L), any());
+
 		// when
 		productImageFacade.deleteImage(productId, "admin");
 
@@ -175,6 +210,13 @@ class ProductImageFacadeTest {
 
 		doReturn(product).when(productService).findById(productId);
 
+		doAnswer(invocationOnMock -> {
+			NamedLockManager.NamedLockCallback<?> callback = invocationOnMock.getArgument(
+				2);
+
+			return callback.doInLock();
+		}).when(namedLockManager).executeWithNamedLock(eq("product_image_" + productId), eq(20L), any());
+
 		// when then
 		assertThrows(ProductNotOwnedByLoggedInMemberException.class,
 			() -> productImageFacade.deleteImage(productId, "user"));
@@ -198,6 +240,13 @@ class ProductImageFacadeTest {
 			.build();
 
 		doReturn(product).when(productService).findById(productId);
+
+		doAnswer(invocationOnMock -> {
+			NamedLockManager.NamedLockCallback<?> callback = invocationOnMock.getArgument(
+				2);
+
+			return callback.doInLock();
+		}).when(namedLockManager).executeWithNamedLock(eq("product_image_" + productId), eq(20L), any());
 
 		// when then
 		assertThrows(ProductImageNotExistException.class, () -> productImageFacade.deleteImage(productId, "admin"));
@@ -225,6 +274,13 @@ class ProductImageFacadeTest {
 
 		doReturn(product).when(productService).findById(productId);
 		doReturn(false).when(localImageStore).deleteImage(imageUrl);
+
+		doAnswer(invocationOnMock -> {
+			NamedLockManager.NamedLockCallback<?> callback = invocationOnMock.getArgument(
+				2);
+
+			return callback.doInLock();
+		}).when(namedLockManager).executeWithNamedLock(eq("product_image_" + productId), eq(20L), any());
 
 		// when then
 		assertThrows(FileDeleteFailedException.class, () -> productImageFacade.deleteImage(productId, "admin"));

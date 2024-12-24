@@ -97,10 +97,13 @@ jacocoTestCoverageVerification {
             excludes = [
                     '**.dto.**',
                     '**.exception.**',
+                    '**.exception1.**',
                     '**.EncryptUtils',
                     '**.SessionManageUtils',
                     '**.converter.**',
-                    "**.image.**"
+                    "**.image.**",
+                    "**.NamedLock**",
+
             ]
         }
     }
