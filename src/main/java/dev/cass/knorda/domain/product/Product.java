@@ -77,4 +77,9 @@ public class Product {
 		this.description = description;
 		this.modifiedAt = LocalDateTime.now();
 	}
+
+	public void updateImage(String imageUrl) {
+		this.imageUrl = imageUrl;
+		this.modifiedAt = LocalDateTime.now();
+	}
 }
