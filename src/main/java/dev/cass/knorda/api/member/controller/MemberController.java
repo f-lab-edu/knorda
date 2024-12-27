@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.cass.knorda.api.member.dto.AuthDto;
 import dev.cass.knorda.api.member.dto.RegisterDto;
 import dev.cass.knorda.api.member.service.MemberService;
+import dev.cass.knorda.global.auth.MemberSession;
 import dev.cass.knorda.global.controller.V1Controller;
-import dev.cass.knorda.global.util.SessionManageUtils;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -53,8 +53,9 @@ public class MemberController {
 	}
 
 	@GetMapping("/members/me")
-	public ResponseEntity<RegisterDto.GetMemberResponse> getLoggedInMember(HttpSession session) {
-		int memberId = SessionManageUtils.getMemberId(session);
+	public ResponseEntity<RegisterDto.GetMemberResponse> getLoggedInMember(
+		@MemberSession AuthDto.SessionDto sessionDto) {
+		int memberId = sessionDto.getMemberId();
 		return ResponseEntity.status(HttpStatus.OK).body(memberService.findMemberResponseByMemberId(memberId));
 	}
 
@@ -77,32 +78,35 @@ public class MemberController {
 	}
 
 	@PutMapping("/members")
-	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(HttpSession session,
+	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(@MemberSession AuthDto.SessionDto sessionDto,
 		@RequestBody @Valid RegisterDto.UpdateMemberRequest request) {
-		String memberName = SessionManageUtils.getMemberName(session);
-		int memberId = SessionManageUtils.getMemberId(session);
+		String memberName = sessionDto.getMemberName();
+		int memberId = sessionDto.getMemberId();
+
 		return ResponseEntity.status(HttpStatus.OK).body(memberService.updateMember(memberId, request, memberName));
 	}
 
 	@PutMapping("/members/{memberId}")
-	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(HttpSession session,
+	public ResponseEntity<RegisterDto.UpdateMemberResponse> updateMember(@MemberSession AuthDto.SessionDto sessionDto,
 		@PathVariable int memberId, @RequestBody @Valid RegisterDto.UpdateMemberRequest request) {
-		String loggedInMember = SessionManageUtils.getMemberName(session);
-		return ResponseEntity.status(HttpStatus.OK).body(memberService.updateMember(memberId, request, loggedInMember));
+		String loggedInMemberName = sessionDto.getMemberName();
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(memberService.updateMember(memberId, request, loggedInMemberName));
 	}
 
 	@DeleteMapping("/members")
-	public ResponseEntity<Void> deleteMember(HttpSession session) {
-		String memberName = SessionManageUtils.getMemberName(session);
-		int memberId = SessionManageUtils.getMemberId(session);
+	public ResponseEntity<Void> deleteMember(@MemberSession AuthDto.SessionDto sessionDto) {
+		String memberName = sessionDto.getMemberName();
+		int memberId = sessionDto.getMemberId();
+
 		memberService.deleteMember(memberId, memberName);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@DeleteMapping("/members/{memberId}")
-	public ResponseEntity<Void> deleteMember(HttpSession session, @PathVariable int memberId) {
-		String loggedInMember = SessionManageUtils.getMemberName(session);
-		memberService.deleteMember(memberId, loggedInMember);
+	public ResponseEntity<Void> deleteMember(@MemberSession AuthDto.SessionDto sessionDto, @PathVariable int memberId) {
+		String loggedInMemberName = sessionDto.getMemberName();
+		memberService.deleteMember(memberId, loggedInMemberName);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
@@ -116,10 +120,10 @@ public class MemberController {
 	}
 
 	@PutMapping("/members/password")
-	public ResponseEntity<Void> changePassword(HttpSession session,
+	public ResponseEntity<Void> changePassword(@MemberSession AuthDto.SessionDto sessionDto,
 		@RequestBody @Valid RegisterDto.PasswordChangeRequest request) {
 		return ResponseEntity.status(
-			memberService.changePassword(SessionManageUtils.getMemberId(session), request) ? HttpStatus.NO_CONTENT :
+			memberService.changePassword(sessionDto.getMemberId(), request) ? HttpStatus.NO_CONTENT :
 				HttpStatus.BAD_REQUEST).build();
 	}
 }

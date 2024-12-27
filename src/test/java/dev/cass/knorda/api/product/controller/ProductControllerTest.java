@@ -15,9 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.MethodParameter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -26,6 +30,7 @@ import dev.cass.knorda.api.member.dto.AuthDto;
 import dev.cass.knorda.api.product.dto.ProductFindDto;
 import dev.cass.knorda.api.product.dto.ProductRegisterDto;
 import dev.cass.knorda.api.product.facade.ProductFacade;
+import dev.cass.knorda.global.auth.MemberSessionArgumentResolver;
 import dev.cass.knorda.global.exception1.GlobalExceptionHandler;
 import dev.cass.knorda.global.util.SessionManageUtils;
 
@@ -41,6 +46,7 @@ class ProductControllerTest {
 	@BeforeEach
 	void setUp() {
 		mockMvc = MockMvcBuilders.standaloneSetup(productController)
+			.setCustomArgumentResolvers(new MockMemberSessionArgumentResolver())
 			.setControllerAdvice(GlobalExceptionHandler.class).build();
 
 		/*
@@ -268,5 +274,15 @@ class ProductControllerTest {
 		// then
 		resultActions
 			.andExpect(status().isBadRequest());
+	}
+
+	static class MockMemberSessionArgumentResolver extends MemberSessionArgumentResolver {
+		@Override
+		public AuthDto.SessionDto resolveArgument(MethodParameter methodParameter,
+			ModelAndViewContainer modelAndViewContainer,
+			NativeWebRequest nativeWebRequest,
+			WebDataBinderFactory webDataBinderFactory) {
+			return new AuthDto.SessionDto("admin", 1);
+		}
 	}
 }

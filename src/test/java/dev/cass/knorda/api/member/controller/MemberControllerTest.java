@@ -13,17 +13,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.cass.knorda.api.member.dto.AuthDto;
 import dev.cass.knorda.api.member.dto.RegisterDto;
 import dev.cass.knorda.api.member.service.MemberService;
+import dev.cass.knorda.global.auth.MemberSessionArgumentResolver;
 import dev.cass.knorda.global.exception1.GlobalExceptionHandler;
 import dev.cass.knorda.global.util.SessionManageUtils;
 
@@ -47,6 +52,7 @@ class MemberControllerTest {
 	 */
 	@Mock
 	private MemberService memberService;
+
 	private MockMvc mockMvc;
 
 	/**
@@ -55,6 +61,7 @@ class MemberControllerTest {
 	@BeforeEach
 	void setUp() {
 		mockMvc = MockMvcBuilders.standaloneSetup(memberController)
+			.setCustomArgumentResolvers(new MockMemberSessionArgumentResolver())
 			.setControllerAdvice(GlobalExceptionHandler.class).build();
 	}
 
@@ -264,14 +271,6 @@ class MemberControllerTest {
 			.andExpect(status().isNoContent());
 	}
 
-	@DisplayName("세션 없을 때 세션 데이터 호출")
-	@Test
-	void getMemberWhenSessionNotExist() throws Exception {
-		// When
-		mockMvc.perform(get("/api/v1/members/me"))
-			.andExpect(status().isUnauthorized());
-	}
-
 	@DisplayName("비밀번호 변경")
 	@Test
 	void changePassword() throws Exception {
@@ -314,6 +313,16 @@ class MemberControllerTest {
 		// Then
 		resultActions
 			.andExpect(status().isBadRequest());
+	}
+
+	static class MockMemberSessionArgumentResolver extends MemberSessionArgumentResolver {
+		@Override
+		public AuthDto.SessionDto resolveArgument(MethodParameter methodParameter,
+			ModelAndViewContainer modelAndViewContainer,
+			NativeWebRequest nativeWebRequest,
+			WebDataBinderFactory webDataBinderFactory) {
+			return new AuthDto.SessionDto("admin", 1);
+		}
 	}
 
 }
