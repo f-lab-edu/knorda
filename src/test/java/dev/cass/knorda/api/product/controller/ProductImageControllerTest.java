@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockMultipartFile;
@@ -18,10 +19,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.ModelAndViewContainer;
 
 import dev.cass.knorda.api.member.dto.AuthDto;
 import dev.cass.knorda.api.product.dto.ProductImageDto;
 import dev.cass.knorda.api.product.facade.ProductImageFacade;
+import dev.cass.knorda.global.auth.MemberSessionArgumentResolver;
 import dev.cass.knorda.global.exception1.GlobalExceptionHandler;
 import dev.cass.knorda.global.util.SessionManageUtils;
 
@@ -42,6 +47,7 @@ class ProductImageControllerTest {
 	@BeforeEach
 	void setUp() {
 		mockMvc = MockMvcBuilders.standaloneSetup(productImageController)
+			.setCustomArgumentResolvers(new MockMemberSessionArgumentResolver())
 			.setControllerAdvice(GlobalExceptionHandler.class)
 			.build();
 	}
@@ -91,5 +97,15 @@ class ProductImageControllerTest {
 
 		// then
 		resultActions.andExpect(status().isNoContent());
+	}
+
+	static class MockMemberSessionArgumentResolver extends MemberSessionArgumentResolver {
+		@Override
+		public AuthDto.SessionDto resolveArgument(MethodParameter methodParameter,
+			ModelAndViewContainer modelAndViewContainer,
+			NativeWebRequest nativeWebRequest,
+			WebDataBinderFactory webDataBinderFactory) {
+			return new AuthDto.SessionDto("admin", 1);
+		}
 	}
 }

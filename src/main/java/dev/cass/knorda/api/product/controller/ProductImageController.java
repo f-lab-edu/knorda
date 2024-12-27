@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import dev.cass.knorda.api.member.dto.AuthDto;
 import dev.cass.knorda.api.product.dto.ProductImageDto;
 import dev.cass.knorda.api.product.facade.ProductImageFacade;
+import dev.cass.knorda.global.auth.MemberSession;
 import dev.cass.knorda.global.controller.V1Controller;
-import dev.cass.knorda.global.util.SessionManageUtils;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,19 +27,19 @@ public class ProductImageController {
 
 	@PostMapping("/products/{productId}/images")
 	public ResponseEntity<ProductImageDto.ImageResponse> registerImage(@PathVariable int productId, MultipartFile image,
-		HttpSession session) {
-		String loggedInMember = SessionManageUtils.getMemberName(session);
+		@MemberSession AuthDto.SessionDto sessionDto) {
+		String loggedInMemberName = sessionDto.getMemberName();
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(productImageFacade.registerImage(productId,
 				new ProductImageDto.ImageRequest(conversionService.convert(image, byte[].class),
 					image.getOriginalFilename()),
-				loggedInMember));
+				loggedInMemberName));
 	}
 
 	@DeleteMapping("/products/{productId}/images")
-	public ResponseEntity<Void> deleteImage(@PathVariable int productId, HttpSession session) {
-		String loggedInMember = SessionManageUtils.getMemberName(session);
-		productImageFacade.deleteImage(productId, loggedInMember);
+	public ResponseEntity<Void> deleteImage(@PathVariable int productId, @MemberSession AuthDto.SessionDto sessionDto) {
+		String loggedInMemberName = sessionDto.getMemberName();
+		productImageFacade.deleteImage(productId, loggedInMemberName);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }

@@ -1,10 +1,14 @@
 package dev.cass.knorda.global.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import dev.cass.knorda.api.product.converter.MultipartToBytesConverter;
+import dev.cass.knorda.global.auth.MemberSessionArgumentResolver;
 
 /**
  * Configuration - 클래스가 하나 이상의 @Bean 메소드를 제공하고, 스프링 컨테이너에 의해 관리되어, 런타임에 해당 빈에 대한 정의와 request를 제공함을 의미
@@ -18,5 +22,10 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Override
 	protected void addFormatters(FormatterRegistry registry) {
 		registry.addConverter(new MultipartToBytesConverter());
+	}
+
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+		argumentResolvers.add(new MemberSessionArgumentResolver());
 	}
 }
